@@ -6,10 +6,12 @@ public class InputManager : MonoBehaviour
 {
     public GameObject player;
     private Movement move;
+    Interaction interaction;
     // Start is called before the first frame update
     void Start()
     {
         move = player.GetComponent<Movement>();
+        interaction = GetComponent<Interaction>();
     }
 
     // Update is called once per frame
@@ -23,8 +25,7 @@ public class InputManager : MonoBehaviour
 
         if (x != 0 || y != 0)  move.MoveOnGround(x, y);
         if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY);
-
-
+        interaction.UpdateWP(Input.GetKeyDown(KeyCode.E));
 
     }
 }
