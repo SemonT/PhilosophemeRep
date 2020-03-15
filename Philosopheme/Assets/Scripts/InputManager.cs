@@ -5,6 +5,13 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public GameObject player;
+    public bool cameraLock = false;
+    /*
+    private float previousX = 0;
+    private float previousY = 0;
+    */
+
+
     private Movement move;
     // Start is called before the first frame update
     void Start()
@@ -15,16 +22,28 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    //    bool dodge = false;
+
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
 
         float mouseX = Input.GetAxisRaw("Mouse X");
         float mouseY = Input.GetAxisRaw("Mouse Y");
 
+
+        /*
+        if ((x == previousX && x != 0) || (y == previousY && y != 0)) ;
+        else dodge = false;
+
+        previousX = x;
+        previousY = y;
+
+        move.Dodge(x, y, dodge);
+        */
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && y > 0) move.Sprint();
         if (x != 0 || y != 0)  move.MoveOnGround(x, y);
-        if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY);
-
-
+        if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY, cameraLock);
+        if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
 
     }
 }

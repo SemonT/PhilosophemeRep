@@ -1187,6 +1187,21 @@ PrefabInstance:
       propertyPath: strafeCoff
       value: 0.4
       objectReference: {fileID: 0}
+    - target: {fileID: 8921868792382754245, guid: f0d492d722c5c9b41b34d310639ffa30,
+        type: 3}
+      propertyPath: jumpForce
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921868792382754250, guid: f0d492d722c5c9b41b34d310639ffa30,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8921868792382754250, guid: f0d492d722c5c9b41b34d310639ffa30,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
     - target: {fileID: 8921868792382754251, guid: f0d492d722c5c9b41b34d310639ffa30,
         type: 3}
       propertyPath: m_Name
