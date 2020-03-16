@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+ //   public Transform h;
+
     public float speed = 2f;
     public float strafeCoff = 0.4f;
     public float vertLimit = 65f;
@@ -44,14 +46,18 @@ public class Movement : MonoBehaviour
 
     public void Jump()
     {
+
         Vector3 origin = transform.localPosition - jumpOrigin * transform.up;
 
         RaycastHit hit;
-        Physics.Raycast(origin, origin - transform.up, out hit, 0.15f);
+        Physics.Raycast(origin, -transform.up, out hit);
+        print("1 "  + hit.distance);
 
-        if (hit.collider)
+        if (hit.distance < 0.15f && hit.collider != null)
         {
+            
             playerRB.AddForce(jumpForce * transform.up);
+            print("2   " + hit.distance + "   " + hit.collider.gameObject);
         }
     }
 
@@ -91,15 +97,15 @@ public class Movement : MonoBehaviour
         playerRB = transform.GetComponent<Rigidbody>();
         health = transform.GetComponent<Health>();
 
-        jumpOrigin = (transform.GetChild(1).localScale.y / 2) - 0.01f; 
+        jumpOrigin = (transform.GetChild(1).localScale.y / 2) - 0.1f; 
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*
+
         Vector3 origin = transform.localPosition - jumpOrigin * transform.up;
-        Debug.DrawLine(origin, origin - 0.1f * transform.up, Color.red);
-        */
+        Debug.DrawLine(origin, origin - 0.15f * transform.up, Color.red);
+        
     }
 }
