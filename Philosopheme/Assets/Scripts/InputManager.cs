@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    public GameObject player;
-    private Movement move;
+    GameObject player;
+    Movement move;
     Interaction interaction;
     // Start is called before the first frame update
     void Start()
     {
+        player = GameManager.instance.playerObject;
         move = player.GetComponent<Movement>();
         interaction = GetComponent<Interaction>();
     }

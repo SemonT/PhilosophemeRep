@@ -24,10 +24,10 @@ public class Interaction : MonoBehaviour
     {
         RaycastHit hit;
         Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit);
-        if (hit.distance <= InteractionMaxDistance)
+        if (hit.distance < InteractionMaxDistance)
         {
             Interactable interactable = hit.transform?.gameObject.GetComponent<Interactable>();
-            if (interactable)
+            if (interactable && interactable.isInteractable)
             {
                 if (!isActive) pointerImage.sprite = pointerActive;
                 isActive = true;
