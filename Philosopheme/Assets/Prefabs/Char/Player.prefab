@@ -103,6 +103,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8921868792382754244}
   - component: {fileID: 8921868792382754245}
+  - component: {fileID: 7199934638242691326}
+  - component: {fileID: 2984801240745787368}
   - component: {fileID: 8921868792382754250}
   m_Layer: 0
   m_Name: Player
@@ -141,7 +143,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   strafeCoff: 0.8
+  vertLimit: 65
   mouseSense: 1.5
+  jumpForce: 100
+  dodgeForce: 500
+--- !u!114 &7199934638242691326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8921868792382754251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbe35247b6c6e9042a21424106df6aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRegen: 1
+  maxHealth: 100
+  maxStamina: 0
+  staminaRegenTime: 5
+  staminaRegenTimer: 1
+  healthRegenTime: 30
+  healthRegenTimer: 3
+  curHealth: 0
+  curStamina: 0
+  stamnaDrainCoff: 1.25
+  armour: 0
+  armorCoff: 0.25
+  deathTime: 180
+--- !u!114 &2984801240745787368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8921868792382754251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdd3fcc927400b644b71c5eec1193537, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &8921868792382754250
 Rigidbody:
   m_ObjectHideFlags: 0

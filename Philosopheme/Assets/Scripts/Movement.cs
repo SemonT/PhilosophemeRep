@@ -7,6 +7,7 @@ public class Movement : MonoBehaviour
     public float speed = 2f;
     public float strafeCoff = 0.4f;
     public float vertLimit = 65f;
+    public float sprintBoost = 2f;
 
     private float pitch;
 
@@ -22,10 +23,13 @@ public class Movement : MonoBehaviour
     private float jumpOrigin;
     private Transform cam;
     private Rigidbody playerRB;
+    private Health health;
 
-    public void MoveOnGround(float x, float y)
+    // Надо переписать через RigidBody, иначе проходит сквозь объекты
+    public void MoveOnGround(float x, float y, bool moveLock)
     {
-        transform.position = Vector3.MoveTowards(transform.position, transform.position + strafeCoff * transform.right * x + transform.forward * y, speed * Time.deltaTime);
+        if (!moveLock) 
+            transform.position = Vector3.MoveTowards(transform.position, transform.position + strafeCoff * transform.right * x + transform.forward * y, speed * Time.deltaTime);
     }
 
     public void Turn(float mouseX, float mouseY, bool cameraLock)
@@ -68,9 +72,16 @@ public class Movement : MonoBehaviour
         }
     }
 
-    public void Sprint()
+    // Надо переписать через RigidBody, иначе проходит сквозь объекты
+    public void Sprint(bool moveLock)
     {
-        // Код, нужна стамина а её пока нет, чтобы спринт работал
+        if (!moveLock && health.curStamina > 0)
+        {
+            health.ResetStaminaTimer();
+            transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, sprintBoost * speed * Time.deltaTime);
+
+            health.curStamina -= health.staminaDrain * Time.deltaTime;
+        }
     }
 
     // Start is called before the first frame update
@@ -78,6 +89,7 @@ public class Movement : MonoBehaviour
     {
         cam = transform.GetChild(0);
         playerRB = transform.GetComponent<Rigidbody>();
+        health = transform.GetComponent<Health>();
 
         jumpOrigin = (transform.GetChild(1).localScale.y / 2) - 0.01f; 
     }

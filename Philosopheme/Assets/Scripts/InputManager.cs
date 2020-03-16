@@ -6,6 +6,7 @@ public class InputManager : MonoBehaviour
 {
     public GameObject player;
     public bool cameraLock = false;
+    public bool moveLock = false;
     /*
     private float previousX = 0;
     private float previousY = 0;
@@ -40,10 +41,15 @@ public class InputManager : MonoBehaviour
 
         move.Dodge(x, y, dodge);
         */
-        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && y > 0) move.Sprint();
-        if (x != 0 || y != 0)  move.MoveOnGround(x, y);
-        if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY, cameraLock);
-        if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
+        if (move != null)
+        {
+            if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKey(KeyCode.W))
+                move.Sprint(moveLock);
+            if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && y > 0) move.Sprint(moveLock);
+            if (x != 0 || y != 0) move.MoveOnGround(x, y, moveLock);
+            if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY, cameraLock);
+            if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
+        }
 
     }
 }
