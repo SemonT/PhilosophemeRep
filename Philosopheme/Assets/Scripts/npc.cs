@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class npc : Interactable
 {
+    public delegate void NPCupdate(bool exitKey, bool leftKey, bool rightKey);
+    public static NPCupdate npcUpdateContainer;
+
     public Sprite sprite;
     public float spriteSize = 0.15f;
     public float spriteVerticalShift = 0.6f;
@@ -14,6 +17,7 @@ public abstract class npc : Interactable
     public float centerLocalDistance = 1f;
     public float centerVerticalShift = 0.2f;
     public float skipDistance = 0.4f;
+    public float shiftSpeed = 0.7f;
 
     bool _active = false;
     bool Active
@@ -278,7 +282,7 @@ public abstract class npc : Interactable
             portraitTransform.gameObject.SetActive(true);
             portraitTransform.position = center + forwardDirection;
             portraitTransform.position += Vector3.up * npc.spriteVerticalShift;
-            portraitTransform.rotation = Quaternion.LookRotation(cameraTransform.position - portraitTransform.position);
+            portraitTransform.rotation = Quaternion.LookRotation(portraitTransform.position - cameraTransform.position);
             portraitTransform.position += Vector3.forward * npc.spriteHorizontalShift;
 
             lightTransform.gameObject.SetActive(true);
@@ -349,6 +353,7 @@ public abstract class npc : Interactable
     void Start()
     {
         letterMatrix = new LetterMatrix(this);
+        npcUpdateContainer += UpdateWP;
     }
     public override void Interact()
     {
@@ -468,22 +473,22 @@ public abstract class npc : Interactable
     }
     public abstract void InteractionTree();
     public abstract float F(float x);
-    private void Update()
+    void UpdateWP(bool exitKey, bool leftKey, bool rightKey)
     {
         CheckCurrentCondition();
         if (Active)
         {
             InteractionTree();
 
-            if (!Input.GetKeyDown(KeyCode.Q))
+            if (!exitKey)
             {
-                if (Input.GetKeyDown(KeyCode.R))
+                if (leftKey)
                 {
-                    letterMatrix.currentBlock?.Shift(0.2f);
+                    letterMatrix.currentBlock?.Shift(Time.deltaTime * shiftSpeed);
                 }
-                if (Input.GetKeyDown(KeyCode.T))
+                if (rightKey)
                 {
-                    letterMatrix.currentBlock?.Shift(-0.2f);
+                    letterMatrix.currentBlock?.Shift(Time.deltaTime * -shiftSpeed);
                 }
             }
             else

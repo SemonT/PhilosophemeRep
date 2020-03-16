@@ -6,7 +6,7 @@ public class InputManager : MonoBehaviour
 {
     Interaction interaction;
 
-    public GameObject player;
+    GameObject player;
     public bool cameraLock = false;
     public bool moveLock = false;
     /*
@@ -35,7 +35,8 @@ public class InputManager : MonoBehaviour
         float mouseX = Input.GetAxisRaw("Mouse X");
         float mouseY = Input.GetAxisRaw("Mouse Y");
 
-        interaction.UpdateWP(Input.GetKeyDown(KeyCode.E));
+        interaction.UpdateWP(Input.GetKeyDown(KeyCode.F));
+        npc.npcUpdateContainer.Invoke(Input.GetKey(KeyCode.Tab), Input.GetKey(KeyCode.Q), Input.GetKey(KeyCode.E));
 
         /*
         if ((x == previousX && x != 0) || (y == previousY && y != 0)) ;

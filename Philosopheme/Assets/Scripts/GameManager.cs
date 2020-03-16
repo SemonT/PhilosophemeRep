@@ -10,10 +10,10 @@ public class GameManager : MonoBehaviour
         if (!instance) instance = this;
     }
     public Light mainLight;
-    public float mainLightDefaultIntencity;
+    [HideInInspector] public float mainLightDefaultIntencity;
     public GameObject playerObject;
     public Camera cam;
-    public float camDefaultFieldOfView;
+    [HideInInspector]  public float camDefaultFieldOfView;
 
     // Start is called before the first frame update
     void Start()

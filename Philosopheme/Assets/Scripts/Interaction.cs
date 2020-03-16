@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Interaction : MonoBehaviour
 {
-    public Transform cameraTransform;
+    Transform cameraTransform;
     public float InteractionMaxDistance;
     public Image pointerImage;
     public Sprite pointerInactive;
@@ -15,7 +15,7 @@ public class Interaction : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        cameraTransform = GameManager.instance.cam.transform;
     }
 
     // Update is called once per frame
