@@ -479,11 +479,11 @@ public abstract class npc : Interactable
             {
                 if (Input.GetKeyDown(KeyCode.R))
                 {
-                    letterMatrix.currentBlock.Shift(0.2f);
+                    letterMatrix.currentBlock?.Shift(0.2f);
                 }
                 if (Input.GetKeyDown(KeyCode.T))
                 {
-                    letterMatrix.currentBlock.Shift(-0.2f);
+                    letterMatrix.currentBlock?.Shift(-0.2f);
                 }
             }
             else
