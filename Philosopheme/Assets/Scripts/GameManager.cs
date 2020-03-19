@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     }
     public Light mainLight;
     [HideInInspector] public float mainLightDefaultIntencity;
-    public GameObject playerObject;
     public Camera cam;
     [HideInInspector]  public float camDefaultFieldOfView;
 

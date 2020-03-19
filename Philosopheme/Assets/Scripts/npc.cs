@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class npc : Interactable
 {
-    public delegate void NPCupdate(bool exitKey, bool leftKey, bool rightKey);
+    public delegate void NPCupdate(bool leftKey, bool rightKey);
     public static NPCupdate npcUpdateContainer;
 
     public Sprite sprite;
@@ -236,11 +236,11 @@ public abstract class npc : Interactable
         List<Block> blocks;
         Transform matrixO;
 
-        Transform playerTransform;
+        public Transform playerTransform;
         Transform cameraTransform;
         Transform portraitTransform;
         Transform lightTransform;
-        Vector3 center;
+        public Vector3 center;
         Vector3 forwardDirection;
         Vector3 npcInitialPos;
 
@@ -249,7 +249,7 @@ public abstract class npc : Interactable
             this.npc = npc;
             blocks = new List<Block>();
             matrixO = new GameObject().transform;
-            playerTransform = GameManager.instance.playerObject.transform;
+            playerTransform = Player.instance.transform;
             cameraTransform = GameManager.instance.cam.transform;
 
             GameObject lightObj = new GameObject();
@@ -289,7 +289,7 @@ public abstract class npc : Interactable
             lightTransform.SetPositionAndRotation(center + new Vector3(0, 1f, 0), Quaternion.LookRotation(Vector3.down));
 
             GameManager.instance.cam.fieldOfView = 110;
-            GameManager.instance.mainLight.intensity = 0f;
+            GameManager.instance.mainLight.gameObject.SetActive(false);
         }
         public Block AddBlock()
         {
@@ -344,7 +344,7 @@ public abstract class npc : Interactable
             lightTransform.gameObject.SetActive(false);
 
             GameManager.instance.cam.fieldOfView = GameManager.instance.camDefaultFieldOfView;
-            GameManager.instance.mainLight.intensity = GameManager.instance.mainLightDefaultIntencity;
+            GameManager.instance.mainLight.gameObject.SetActive(true);
         }
     }
     LetterMatrix letterMatrix;
@@ -473,14 +473,15 @@ public abstract class npc : Interactable
     }
     public abstract void InteractionTree();
     public abstract float F(float x);
-    void UpdateWP(bool exitKey, bool leftKey, bool rightKey)
+    void UpdateWP(bool leftKey, bool rightKey)
     {
         CheckCurrentCondition();
         if (Active)
         {
             InteractionTree();
 
-            if (!exitKey)
+            float playerDistance = (letterMatrix.center - letterMatrix.playerTransform.position).magnitude;
+            if (centerLocalDistance > playerDistance)
             {
                 if (leftKey)
                 {
