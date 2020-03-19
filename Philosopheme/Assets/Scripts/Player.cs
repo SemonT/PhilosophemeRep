@@ -6,6 +6,9 @@ public class Player : MonoBehaviour
 {
     public static Player instance;
 
+    public Animator animator;
+    public AnimationClip[] clips;
+
     public float damage = -50f;
 
     public Transform armTransform;
@@ -17,6 +20,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
+        if (animator) clips = animator.runtimeAnimatorController.animationClips;
         
     }
 

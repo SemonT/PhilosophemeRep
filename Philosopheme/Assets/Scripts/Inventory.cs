@@ -11,6 +11,8 @@ public class Inventory : MonoBehaviour
     [HideInInspector] public bool isOpened;
     List<Item> items;
     Item currentItem;
+    AnimationClip currentAnim1;
+    AnimationClip currentAnim2;
     Player player;
 
     List<GameObject> trimObjectsList;
@@ -39,7 +41,8 @@ public class Inventory : MonoBehaviour
     private void Update()
     {
         bool openInventoryKey = Input.GetKeyDown(KeyCode.Tab);
-        bool useCurrentItemKey = Input.GetKeyDown(KeyCode.Mouse0);
+        bool useCurrentItemKey1 = Input.GetKeyDown(KeyCode.Mouse0);
+        bool useCurrentItemKey2 = Input.GetKeyDown(KeyCode.Mouse1);
         bool releaseCurrentItemKey = Input.GetKeyDown(KeyCode.R);
         if (isOpened)
         {
@@ -50,7 +53,7 @@ public class Inventory : MonoBehaviour
             }
             foreach (Item item in items)
             {
-                if (item != currentItem) item.gameObject.transform.RotateAround(item.gameObject.transform.position, Vector3.one, Time.deltaTime * 30);
+                if (item != currentItem) item.gameObject.transform.RotateAround(item.transform.position, Vector3.one, Time.deltaTime * 30);
             }
         }
         else
@@ -60,7 +63,8 @@ public class Inventory : MonoBehaviour
                 OpenInventory();
             }
         }
-        if (useCurrentItemKey) UseCurrentItem();
+        if (useCurrentItemKey1) UseCurrentItem(currentAnim1);
+        if (useCurrentItemKey2) UseCurrentItem(currentAnim2);
         if (releaseCurrentItemKey) ReleaseCurrentItem();
     }
     public void OpenInventory()
@@ -118,9 +122,21 @@ public class Inventory : MonoBehaviour
         DropCurrentItem();
         currentItem = item;
         currentItem.gameObject.transform.parent = player.armTransform;
-        currentItem.gameObject.transform.localPosition = Vector3.zero;
-        currentItem.gameObject.transform.rotation = player.armTransform.rotation;
+        currentItem.gameObject.transform.localPosition = -currentItem.handle.localPosition;
+        currentItem.gameObject.transform.localRotation = Quaternion.LookRotation(currentItem.forwardPointer.localPosition);
         currentItem.GetComponent<Collider>().enabled = false;
+
+        foreach (AnimationClip clip in player.clips)
+        {
+            if (clip.name == currentItem.className + "1")
+            {
+                currentAnim1 = clip;
+            }
+            if (clip.name == currentItem.className + "2")
+            {
+                currentAnim2 = clip;
+            }
+        }
     }
     void DropCurrentItem()
     {
@@ -128,6 +144,8 @@ public class Inventory : MonoBehaviour
         {
             currentItem.gameObject.transform.parent = null;
             currentItem.GetComponent<Collider>().enabled = true;
+            currentAnim1 = null;
+            currentAnim2 = null;
             currentItem = null;
         }
     }
@@ -141,9 +159,10 @@ public class Inventory : MonoBehaviour
             DropCurrentItem();
         }
     }
-    public void UseCurrentItem()
+    public void UseCurrentItem(AnimationClip anim)
     {
-        if (!isOpened) currentItem?.Use();
+        if (!isOpened) currentItem?.Use(anim);
+        if (player.animator && anim) player.animator.SetTrigger(anim.name);
     }
 
     void OnDestroy()

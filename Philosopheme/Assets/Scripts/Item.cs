@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : Interactable
+public abstract class Item : Interactable
 {
-    public string itemClassName = "undefined";
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string className = "undefined";
+    public Transform handle;
+    public Transform forwardPointer;
 
     public override void Interact()
     {
@@ -25,8 +21,5 @@ public class Item : Interactable
         }
     }
 
-    public void Use()
-    {
-        print("USING!");
-    }
+    public abstract void Use(AnimationClip anim);
 }
