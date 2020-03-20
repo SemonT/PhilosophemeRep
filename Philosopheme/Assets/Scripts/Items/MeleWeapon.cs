@@ -14,13 +14,13 @@ public class MeleWeapon : Item
     public Attack[] attacks;
 
     Attack currentAttack;
-
     bool isActive = false;
     List<Health> hittedHealthBoxes = new List<Health>();
     float useTimer = 0;
 
     void Start()
     {
+        isUsable = true;
         actions = attacks;
     }
 
@@ -51,7 +51,10 @@ public class MeleWeapon : Item
             if (useTimer > 0)
                 useTimer -= Time.deltaTime;
             else
+            {
                 isActive = false;
+                isUsable = true;
+            }
         }
     }
 
@@ -73,6 +76,7 @@ public class MeleWeapon : Item
                 hittedHealthBoxes.Clear();
                 useTimer = anim.length;
                 isActive = true;
+                isUsable = false;
             }
         }
     }

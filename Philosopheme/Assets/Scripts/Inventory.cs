@@ -164,8 +164,11 @@ public class Inventory : MonoBehaviour
     }
     public void UseCurrentItem(AnimationClip anim)
     {
-        if (!isOpened) currentItem?.Use(anim);
-        if (player.animator && anim) player.animator.SetTrigger(anim.name);
+        if (currentItem && currentItem.isUsable && !isOpened)
+        {
+            currentItem.Use(anim);
+            if (player.animator && anim) player.animator.SetTrigger(anim.name);
+        }
     }
 
     void OnDestroy()

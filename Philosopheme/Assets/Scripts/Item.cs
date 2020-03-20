@@ -13,8 +13,8 @@ public abstract class Item : Interactable
     public Transform handle;
     public Transform forwardPointer;
 
+    [HideInInspector] public bool isUsable = true;
     [HideInInspector] public Action[] actions;
-
 
     public override void Interact()
     {
