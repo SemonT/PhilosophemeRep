@@ -424,6 +424,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 705569940155801006, guid: 6b8049ba378aef54e96fa82b56a5000f,
+        type: 3}
+      propertyPath: attacks.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 705569940155801006, guid: 6b8049ba378aef54e96fa82b56a5000f,
+        type: 3}
+      propertyPath: attacks.Array.data[0].animationName
+      value: Club1
+      objectReference: {fileID: 0}
+    - target: {fileID: 705569940155801006, guid: 6b8049ba378aef54e96fa82b56a5000f,
+        type: 3}
+      propertyPath: attacks.Array.data[1].animationName
+      value: Club2
+      objectReference: {fileID: 0}
+    - target: {fileID: 705569940155801006, guid: 6b8049ba378aef54e96fa82b56a5000f,
+        type: 3}
+      propertyPath: attacks.Array.data[0].damage
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 705569940155801006, guid: 6b8049ba378aef54e96fa82b56a5000f,
+        type: 3}
+      propertyPath: attacks.Array.data[1].damage
+      value: 40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b8049ba378aef54e96fa82b56a5000f, type: 3}
 --- !u!1001 &1080050031037872663

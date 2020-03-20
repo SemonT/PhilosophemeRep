@@ -11,8 +11,7 @@ public class Inventory : MonoBehaviour
     [HideInInspector] public bool isOpened;
     List<Item> items;
     Item currentItem;
-    AnimationClip currentAnim1;
-    AnimationClip currentAnim2;
+    AnimationClip[] currentAnims;
     Player player;
 
     List<GameObject> trimObjectsList;
@@ -63,8 +62,11 @@ public class Inventory : MonoBehaviour
                 OpenInventory();
             }
         }
-        if (useCurrentItemKey1) UseCurrentItem(currentAnim1);
-        if (useCurrentItemKey2) UseCurrentItem(currentAnim2);
+        if (currentAnims != null)
+        {
+            if (useCurrentItemKey1 && currentAnims.Length > 0) UseCurrentItem(currentAnims[0]);
+            if (useCurrentItemKey2 && currentAnims.Length > 1) UseCurrentItem(currentAnims[1]);
+        }
         if (releaseCurrentItemKey) ReleaseCurrentItem();
     }
     public void OpenInventory()
@@ -126,16 +128,18 @@ public class Inventory : MonoBehaviour
         currentItem.gameObject.transform.localRotation = Quaternion.LookRotation(currentItem.forwardPointer.localPosition);
         currentItem.GetComponent<Collider>().enabled = false;
 
-        foreach (AnimationClip clip in player.clips)
+        currentAnims = new AnimationClip[currentItem.actions.Length];
+        int actionI = 0;
+        foreach (Item.Action a in currentItem.actions)
         {
-            if (clip.name == currentItem.className + "1")
+            foreach (AnimationClip clip in player.clips)
             {
-                currentAnim1 = clip;
+                if (clip.name == a.animationName)
+                {
+                    currentAnims[actionI] = clip;
+                }
             }
-            if (clip.name == currentItem.className + "2")
-            {
-                currentAnim2 = clip;
-            }
+            actionI++;
         }
     }
     void DropCurrentItem()
@@ -144,8 +148,7 @@ public class Inventory : MonoBehaviour
         {
             currentItem.gameObject.transform.parent = null;
             currentItem.GetComponent<Collider>().enabled = true;
-            currentAnim1 = null;
-            currentAnim2 = null;
+            currentAnims = null;
             currentItem = null;
         }
     }

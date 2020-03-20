@@ -4,14 +4,25 @@ using UnityEngine;
 
 public class MeleWeapon : Item
 {
+    [System.Serializable]
+    public class Attack : Action
+    {
+        public float damage;
+    }
+
     public Transform[] raySources;
-    public float damage1 = 10;
-    public float damage2 = 20;
-    float damage;
+    public Attack[] attacks;
+
+    Attack currentAttack;
 
     bool isActive = false;
     List<Health> hittedHealthBoxes = new List<Health>();
     float useTimer = 0;
+
+    void Start()
+    {
+        actions = attacks;
+    }
 
     // Update is called once per frame
     void Update()
@@ -31,7 +42,7 @@ public class MeleWeapon : Item
                     Health health = hit.collider?.gameObject.GetComponent<Health>();
                     if (health && hittedHealthBoxes.IndexOf(health) == -1)
                     {
-                        health.HealthChange(-damage);
+                        health.HealthChange(-currentAttack.damage);
                         hittedHealthBoxes.Add(health);
                     }
                 }
@@ -46,13 +57,23 @@ public class MeleWeapon : Item
 
     public override void Use(AnimationClip anim)
     {
-        damage = damage1;
         if (!isActive)
         {
-            isActive = true;
-            hittedHealthBoxes.Clear();
-            if (anim)
+            currentAttack = null;
+            foreach (Attack a in actions)
+            {
+                if (a.animationName == anim.name)
+                {
+                    currentAttack = a;
+                    break;
+                }
+            }
+            if (currentAttack != null)
+            {
+                hittedHealthBoxes.Clear();
                 useTimer = anim.length;
+                isActive = true;
+            }
         }
     }
 }
