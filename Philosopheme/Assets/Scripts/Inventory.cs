@@ -6,16 +6,27 @@ public class Inventory : MonoBehaviour
 {
     public static Inventory instance;
 
+    public Transform centerTransform;
+    public Transform planeTransform;
+    public Light light1;
+    public Light light2;
     public Vector3 firstItemPos;
 
-    [HideInInspector] public bool isOpened;
+    Vector3 planeInitialScale;
+    Vector3 light1InitialPosition;
+    Vector3 light2InitialPosition;
+    float light1InitialRange;
+    float light2InitialRange;
+
     List<Item> items;
+    Player player;
+    Vector3 playerStartPosition;
+    Quaternion playerStartRotation;
+    [HideInInspector] public bool isOpened;
     Item currentItem;
     AnimationClip[] currentAnims;
-    Player player;
 
     List<GameObject> trimObjectsList;
-    Transform centerTransform;
     float normalDelta;
     float radius;
 
@@ -30,9 +41,17 @@ public class Inventory : MonoBehaviour
         isOpened = false;
         player = Player.instance;
 
-        centerTransform = new GameObject().transform;
         normalDelta = firstItemPos.magnitude;
         radius = 0;
+
+        planeTransform.gameObject.SetActive(false);
+        light1.gameObject.SetActive(false);
+        light2.gameObject.SetActive(false);
+        planeInitialScale = planeTransform.localScale;
+        light1InitialPosition = light1.gameObject.transform.localPosition;
+        light2InitialPosition = light2.gameObject.transform.localPosition;
+        light1InitialRange = light1.range;
+        light2InitialRange = light2.range;
 
         trimObjectsList = new List<GameObject>();
     }
@@ -72,10 +91,9 @@ public class Inventory : MonoBehaviour
     public void OpenInventory()
     {
         isOpened = true;
-
-        centerTransform.SetPositionAndRotation(player.gameObject.transform.position, player.gameObject.transform.rotation);
-
-        //GameManager.instance.mainLight.gameObject.SetActive(false);
+        playerStartPosition = player.gameObject.transform.position;
+        playerStartRotation = player.gameObject.transform.rotation;
+        player.gameObject.transform.SetPositionAndRotation(centerTransform.position, centerTransform.rotation);
 
         Vector3 pos = firstItemPos;
         for (int i = 0; i < items.Count; i++)
@@ -86,7 +104,8 @@ public class Inventory : MonoBehaviour
             {
                 itemObject.SetActive(true);
                 itemObject.transform.parent = centerTransform;
-                itemObject.transform.localPosition = pos;
+                itemObject.transform.localPosition = Vector3.zero;
+                GameManager.instance.TranslatePositionObject(itemObject.transform, pos, 0.5f);
                 itemObject.transform.localRotation = Random.rotation;
 
                 radius = pos.magnitude;
@@ -94,10 +113,21 @@ public class Inventory : MonoBehaviour
                 pos += Vector3.Cross(pos, Vector3.up).normalized * normalDelta;
             }
         }
+
+        GameManager.instance.mainLight.gameObject.SetActive(false);
+        planeTransform.gameObject.SetActive(true);
+        light1.gameObject.SetActive(true);
+        light2.gameObject.SetActive(true);
+        planeTransform.localScale = planeInitialScale * radius;
+        light1.gameObject.transform.localPosition = light1InitialPosition * radius;
+        light2.gameObject.transform.localPosition = light2InitialPosition * radius;
+        light1.range = light1InitialRange * radius;
+        light2.range = light2InitialRange * radius;
     }
     public void CloseInventory()
     {
         isOpened = false;
+        player.gameObject.transform.SetPositionAndRotation(playerStartPosition, playerStartRotation);
 
         foreach (Item item in items)
         {
@@ -107,7 +137,11 @@ public class Inventory : MonoBehaviour
                 item.gameObject.SetActive(false);
             }
         }
-        //GameManager.instance.mainLight.gameObject.SetActive(true);
+
+        GameManager.instance.mainLight.gameObject.SetActive(true);
+        planeTransform.gameObject.SetActive(false);
+        light1.gameObject.SetActive(false);
+        light2.gameObject.SetActive(false);
 
         foreach (GameObject o in trimObjectsList) Destroy(o);
         trimObjectsList.Clear();
@@ -126,6 +160,7 @@ public class Inventory : MonoBehaviour
         currentItem.gameObject.transform.parent = player.armTransform;
         currentItem.gameObject.transform.localPosition = -currentItem.handle.localPosition;
         currentItem.gameObject.transform.localRotation = Quaternion.LookRotation(currentItem.forwardPointer.localPosition);
+        currentItem.GetComponent<Rigidbody>().isKinematic = true;
         currentItem.GetComponent<Collider>().enabled = false;
 
         currentAnims = new AnimationClip[currentItem.actions.Length];
@@ -157,14 +192,26 @@ public class Inventory : MonoBehaviour
         if (currentItem)
         {
             items.Remove(currentItem);
-            currentItem.GetComponent<Rigidbody>().isKinematic = false;
-            currentItem.GetComponent<Collider>().isTrigger = false;
-            DropCurrentItem();
+            if (isOpened)
+            {
+                currentItem.gameObject.transform.parent = centerTransform;
+                GameManager.instance.TranslatePositionObject(currentItem.gameObject.transform, light1.gameObject.transform.localPosition + Vector3.up * normalDelta, light1.gameObject.transform.localPosition.magnitude);
+                Destroy(currentItem.gameObject, light1.gameObject.transform.localPosition.magnitude);
+            }
+            else
+            {
+                currentItem.gameObject.transform.parent = null;
+                currentItem.GetComponent<Collider>().enabled = true;
+                currentItem.GetComponent<Collider>().isTrigger = false;
+                currentItem.GetComponent<Rigidbody>().isKinematic = false;
+            }
+            currentAnims = null;
+            currentItem = null;
         }
     }
     public void UseCurrentItem(AnimationClip anim)
     {
-        if (currentItem && currentItem.isUsable && !isOpened)
+        if (currentItem && currentItem.isUsable)
         {
             currentItem.Use(anim);
             if (player.animator && anim) player.animator.SetTrigger(anim.name);
