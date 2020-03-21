@@ -7,18 +7,22 @@ public abstract class npc : Interactable
     public delegate void NPCupdate(bool leftKey, bool rightKey);
     public static NPCupdate npcUpdateContainer;
 
-    public Sprite sprite;
-    public float spriteSize = 0.15f;
-    public float spriteVerticalShift = 0.6f;
-    public float spriteHorizontalShift = 0f;
+    public Transform portraitTransform;
+    public Transform lightTransform;
+    public Transform oTransform;
+    public Transform orientationTransform;
+    public GameObject letterPrefab;
     public float charactersSize = 0.05f;
     public float textHorizontalIntervalMultiplier = 1f;
     public float textVerticalIntervalMultiplier = 2f;
-    public float centerLocalDistance = 1f;
-    public float centerVerticalShift = 0.2f;
+    public float textReachTime = 0.2f;
+    public float textDelayDelta = 0.03f;
     public float skipDistance = 0.4f;
     public float shiftSpeed = 0.7f;
+    public float exitRadius = 2f;
 
+    Light spotLight;
+    Transform cameraTransform;
     bool _active = false;
     bool Active
     {
@@ -72,6 +76,7 @@ public abstract class npc : Interactable
 
                 public Block block;
 
+                public GameManager.PositionTranslationObject lastLetterTransit;
                 public List<GameObject> letters;
                 public Transform lineO;
                 public float size;
@@ -103,23 +108,26 @@ public abstract class npc : Interactable
                     stringLetters += text;
                     for (int i = 0; i < text.Length; i++)
                     {
-                        GameObject obj = new GameObject();
-                        letters.Add(obj);
-                        obj.transform.parent = lineO.transform;
                         float x = cursorX;
                         float y = 0;
                         float z = block.matrix.npc.F(x);
-                        obj.transform.localPosition = new Vector3(x, y, z);
-                        obj.transform.rotation = Quaternion.LookRotation(obj.transform.position - block.matrix.cameraTransform.position);
-                        obj.AddComponent<MeshRenderer>();
-                        TextMesh mesh = obj.AddComponent<TextMesh>();
-                        mesh.anchor = TextAnchor.MiddleCenter;
-                        mesh.characterSize = block.matrix.npc.charactersSize;
+                        Vector3 targetPos = new Vector3(x, y, z);
+                        GameObject obj = Instantiate(
+                            block.matrix.npc.letterPrefab,
+                            block.matrix.npc.gameObject.transform.position,
+                            Quaternion.LookRotation(block.matrix.npc.orientationTransform.localPosition - targetPos),
+                            lineO.transform);
+                        letters.Add(obj);
+                        GameManager.PositionTranslationObject o = new GameManager.PositionTranslationObject(obj.transform, targetPos, block.matrix.npc.textReachTime, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, i * block.matrix.npc.textDelayDelta);
+                        GameManager.instance.TranslatePositionObject(ref o);
+                        if (i == text.Length - 1) lastLetterTransit = o;
+                        TextMesh mesh = obj.GetComponent<TextMesh>();
                         mesh.text = text[i].ToString();
                         mesh.color = color;
 
                         cursorX -= block.matrix.npc.charactersSize * block.matrix.npc.textHorizontalIntervalMultiplier;
                     }
+
                 }
                 public void DestroyLetters()
                 {
@@ -127,6 +135,7 @@ public abstract class npc : Interactable
                     {
                         Destroy(o);
                     }
+                    letters = null;
                 }
             }
 
@@ -141,14 +150,14 @@ public abstract class npc : Interactable
                 this.matrix = matrix;
 
                 blockO = new GameObject().transform;
-                blockO.parent = matrix.matrixO;
+                blockO.parent = matrix.npc.oTransform;
                 float shift = 0;
                 foreach (Block b in matrix.blocks)
                 {
                     shift += b.size;
                 }
                 blockO.localPosition = new Vector3(0, -shift, 0);
-                blockO.rotation = matrix.matrixO.rotation;
+                blockO.rotation = matrix.npc.oTransform.rotation;
 
                 lines = new List<Line>();
 
@@ -186,7 +195,7 @@ public abstract class npc : Interactable
                 float minAngle = 180;
                 foreach (Line l in lines)
                 {
-                    float a = Vector3.Angle(matrix.cameraTransform.forward, l.lineO.position - matrix.cameraTransform.position);
+                    float a = Vector3.Angle(matrix.npc.cameraTransform.forward, l.lineO.position - matrix.npc.cameraTransform.position);
                     if (a < minAngle)
                     {
                         minAngle = a;
@@ -200,93 +209,66 @@ public abstract class npc : Interactable
                 Line line = FindNearestLine();
                 if (line == null) return;
 
-                foreach (GameObject o in line.letters)
+                if (line.lastLetterTransit != null && line.lastLetterTransit.isReached)
                 {
-                    float newX = o.transform.localPosition.x + x;
-                    float newY = o.transform.localPosition.y;
-                    float newZ = matrix.npc.F(newX);
-                    o.transform.localPosition = new Vector3(newX, newY, newZ);
-                    o.transform.rotation = Quaternion.LookRotation(o.transform.position - matrix.cameraTransform.position);
-                }
-                Transform tf = line.letters[0].transform;
-                Transform tl = line.letters[line.letters.Count - 1].transform;
-                if (tf.localPosition.x < -matrix.npc.skipDistance || tl.localPosition.x > matrix.npc.skipDistance)
-                {
-                    int lineIndex;
-                    if (line.isOption)
+                    foreach (GameObject letter in line.letters)
                     {
-                        matrix.optionChoises.Add(line.stringLetters);
-                        matrix.choisesMadeCounter++;
-                        lineIndex = lines.Count - 1;
+                        float newX = letter.transform.localPosition.x + x;
+                        float newY = letter.transform.localPosition.y;
+                        float newZ = matrix.npc.F(newX);
+                        letter.transform.localPosition = new Vector3(newX, newY, newZ);
+                        letter.transform.localRotation = Quaternion.LookRotation(letter.transform.localPosition - matrix.npc.orientationTransform.localPosition);
                     }
-                    else
+                    Transform tf = line.letters[0].transform;
+                    Transform tl = line.letters[line.letters.Count - 1].transform;
+                    if (tf.localPosition.x < -matrix.npc.skipDistance || tl.localPosition.x > matrix.npc.skipDistance)
                     {
-                        lineIndex = lines.IndexOf(line);
-                    }
-                    for (int i = 0; i <= lineIndex; i++) DestroyLineAt(0);
-                    if (lines.Count == 0)
-                    {
-                        matrix.currentBlockDone = true;
-                        matrix.DestroyBlockAt(0);
+                        int lineIndex;
+                        if (line.isOption)
+                        {
+                            matrix.optionChoises.Add(line.stringLetters);
+                            matrix.choisesMadeCounter++;
+                            lineIndex = lines.Count - 1;
+                        }
+                        else
+                        {
+                            lineIndex = lines.IndexOf(line);
+                        }
+                        for (int i = 0; i <= lineIndex; i++) DestroyLineAt(0);
+                        if (lines.Count == 0)
+                        {
+                            matrix.currentBlockDone = true;
+                            matrix.DestroyBlockAt(0);
+                        }
                     }
                 }
             }
         }
         npc npc;
         List<Block> blocks;
-        Transform matrixO;
 
         public Transform playerTransform;
-        Transform cameraTransform;
-        Transform portraitTransform;
-        Transform lightTransform;
         public Vector3 center;
-        Vector3 forwardDirection;
-        Vector3 npcInitialPos;
 
         public LetterMatrix(npc npc)
         {
             this.npc = npc;
             blocks = new List<Block>();
-            matrixO = new GameObject().transform;
             playerTransform = Player.instance.transform;
-            cameraTransform = GameManager.instance.cam.transform;
+            npc.cameraTransform = GameManager.instance.cam.transform;
+            npc.spotLight = npc.lightTransform.gameObject.GetComponent<Light>();
+            npc.charactersSize = npc.letterPrefab.GetComponent<TextMesh>().characterSize * npc.letterPrefab.transform.localScale.x;
 
-            GameObject lightObj = new GameObject();
-            lightTransform = lightObj.transform;
-            Light light = lightObj.AddComponent<Light>();
-            light.type = LightType.Spot;
-            light.spotAngle = 90;
-            light.range = 15f;
-            light.color = new Color(0.9f, 0.9f, 1);
-            lightObj.SetActive(false);
+            npc.lightTransform.gameObject.SetActive(false);
 
-            GameObject portraitObj = new GameObject();
-            portraitTransform = portraitObj.transform;
-            portraitTransform.localScale = new Vector3(npc.spriteSize, npc.spriteSize, npc.spriteSize);
-            SpriteRenderer spriteRenderer = portraitObj.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = npc.sprite;
-            portraitObj.SetActive(false);
+            center = npc.portraitTransform.position;
+            npc.portraitTransform.gameObject.SetActive(false);
         }
         public void CreateDialogue()
         {
-            center = playerTransform.position;
-            forwardDirection = (npc.transform.position - center).normalized;
-            forwardDirection.y = npc.centerVerticalShift;
-            forwardDirection *= npc.centerLocalDistance;
+            npc.portraitTransform.gameObject.SetActive(true);
 
-            matrixO.SetPositionAndRotation(center + forwardDirection, Quaternion.LookRotation(new Vector3(-forwardDirection.x, 0, -forwardDirection.z)));
-            npcInitialPos = npc.gameObject.transform.position;
-            npc.gameObject.transform.position = new Vector3(matrixO.position.x, npc.gameObject.transform.position.y, matrixO.position.z);
-
-            portraitTransform.gameObject.SetActive(true);
-            portraitTransform.position = center + forwardDirection;
-            portraitTransform.position += Vector3.up * npc.spriteVerticalShift;
-            portraitTransform.rotation = Quaternion.LookRotation(portraitTransform.position - cameraTransform.position);
-            portraitTransform.position += Vector3.forward * npc.spriteHorizontalShift;
-
-            lightTransform.gameObject.SetActive(true);
-            lightTransform.SetPositionAndRotation(center + new Vector3(0, 1f, 0), Quaternion.LookRotation(Vector3.down));
+            npc.lightTransform.gameObject.SetActive(true);
 
             GameManager.instance.cam.fieldOfView = 110;
             GameManager.instance.mainLight.gameObject.SetActive(false);
@@ -303,7 +285,7 @@ public abstract class npc : Interactable
             float minAngle = 180;
             foreach (Block b in blocks)
             {
-                float a = Vector3.Angle(cameraTransform.forward, b.blockO.position - cameraTransform.position);
+                float a = Vector3.Angle(npc.cameraTransform.forward, b.blockO.position - npc.cameraTransform.position);
                 if (a < minAngle)
                 {
                     minAngle = a;
@@ -337,11 +319,8 @@ public abstract class npc : Interactable
             currentBlock = null;
             currentBlockBuilded = false;
 
-
-            npc.gameObject.transform.position = npcInitialPos;
-
-            portraitTransform.gameObject.SetActive(false);
-            lightTransform.gameObject.SetActive(false);
+            npc.portraitTransform.gameObject.SetActive(false);
+            npc.lightTransform.gameObject.SetActive(false);
 
             GameManager.instance.cam.fieldOfView = GameManager.instance.camDefaultFieldOfView;
             GameManager.instance.mainLight.gameObject.SetActive(true);
@@ -480,9 +459,9 @@ public abstract class npc : Interactable
         {
             InteractionTree();
 
-            float playerDistance = (letterMatrix.center - letterMatrix.playerTransform.position).magnitude;
-            if (centerLocalDistance > playerDistance)
+            if (spotLight.spotAngle / 2 > Vector3.Angle((Player.instance.gameObject.transform.position - lightTransform.position), lightTransform.forward))
             {
+                portraitTransform.rotation = Quaternion.LookRotation(portraitTransform.position - cameraTransform.position);
                 if (leftKey)
                 {
                     letterMatrix.currentBlock?.Shift(Time.deltaTime * shiftSpeed);
@@ -498,5 +477,4 @@ public abstract class npc : Interactable
             }
         }
     }
-    
 }

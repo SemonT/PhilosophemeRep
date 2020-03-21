@@ -36,7 +36,7 @@ public class InputManager : MonoBehaviour
         float mouseY = Input.GetAxisRaw("Mouse Y");
 
         interaction.UpdateWP(Input.GetKeyDown(KeyCode.F));
-        npc.npcUpdateContainer.Invoke(Input.GetKey(KeyCode.Q), Input.GetKey(KeyCode.E));
+        npc.npcUpdateContainer?.Invoke(Input.GetKey(KeyCode.Q), Input.GetKey(KeyCode.E));
 
         /*
         if ((x == previousX && x != 0) || (y == previousY && y != 0)) ;

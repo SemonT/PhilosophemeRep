@@ -7,10 +7,17 @@ public class GameManager : MonoBehaviour
     public class PositionTranslationObject
     {
         public Transform transform;
+
+
         public Vector3 target;
         public float smoothTime;
         public float maxSpeed;
         public float error;
+        public float delay;
+
+        static public float maxSpeedDefault { get; } = -1f;
+        static public float errorDefault { get; } = 0.01f;
+        static public float delayDefault { get; } = 0f;
 
         public bool isReached = false;
 
@@ -22,8 +29,9 @@ public class GameManager : MonoBehaviour
             this.transform = transform;
             this.target = target;
             this.smoothTime = smoothTime;
-            maxSpeed = -1;
-            error = 0.01f;
+            maxSpeed = maxSpeedDefault;
+            error = errorDefault;
+            delay = delayDefault;
             currentVelocity = Vector3.zero;
             prevFramePos = transform.localPosition;
         }
@@ -33,7 +41,8 @@ public class GameManager : MonoBehaviour
             this.target = target;
             this.smoothTime = smoothTime;
             this.maxSpeed = maxSpeed;
-            error = 0.01f;
+            error = errorDefault;
+            delay = delayDefault;
             currentVelocity = Vector3.zero;
             prevFramePos = transform.localPosition;
         }
@@ -44,6 +53,18 @@ public class GameManager : MonoBehaviour
             this.smoothTime = smoothTime;
             this.maxSpeed = maxSpeed;
             this.error = error;
+            delay = delayDefault;
+            currentVelocity = Vector3.zero;
+            prevFramePos = transform.localPosition;
+        }
+        public PositionTranslationObject(Transform transform, Vector3 target, float smoothTime, float maxSpeed, float error, float delay)
+        {
+            this.transform = transform;
+            this.target = target;
+            this.smoothTime = smoothTime;
+            this.maxSpeed = maxSpeed;
+            this.error = error;
+            this.delay = delay;
             currentVelocity = Vector3.zero;
             prevFramePos = transform.localPosition;
         }
@@ -80,11 +101,18 @@ public class GameManager : MonoBehaviour
             PositionTranslationObject o = positionTranslationObjects[i];
             if (o.transform && o.transform.gameObject && (o.target - o.transform.localPosition).magnitude > o.error && o.transform.localPosition == o.prevFramePos)
             {
-                if (o.maxSpeed == -1)
-                    o.transform.localPosition = Vector3.SmoothDamp(o.transform.localPosition, o.target, ref o.currentVelocity, o.smoothTime);
+                if (o.delay > 0)
+                {
+                    o.delay -= Time.deltaTime;
+                }
                 else
-                    o.transform.localPosition = Vector3.SmoothDamp(o.transform.localPosition, o.target, ref o.currentVelocity, o.smoothTime, o.maxSpeed);
-                o.prevFramePos = o.transform.localPosition;
+                {
+                    if (o.maxSpeed == -1)
+                        o.transform.localPosition = Vector3.SmoothDamp(o.transform.localPosition, o.target, ref o.currentVelocity, o.smoothTime);
+                    else
+                        o.transform.localPosition = Vector3.SmoothDamp(o.transform.localPosition, o.target, ref o.currentVelocity, o.smoothTime, o.maxSpeed);
+                    o.prevFramePos = o.transform.localPosition;
+                }
             }
             else
             {
@@ -110,6 +138,10 @@ public class GameManager : MonoBehaviour
     public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed, float error)
     {
         positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error));
+    }
+    public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed, float error, float delay)
+    {
+        positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error, delay));
     }
 
     private void OnDestroy()
