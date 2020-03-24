@@ -20,13 +20,12 @@ public class Inventory : MonoBehaviour
 
     List<Item> items;
     Player player;
+    Animator animator;
     Vector3 playerStartPosition;
     Quaternion playerStartRotation;
     [HideInInspector] public bool isOpened;
     Item currentItem;
-    AnimationClip[] currentAnims;
 
-    List<GameObject> trimObjectsList;
     float normalDelta;
     float radius;
 
@@ -37,9 +36,10 @@ public class Inventory : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = Player.instance;
+        animator = player.gameObject.GetComponent<Animator>();
         items = new List<Item>();
         isOpened = false;
-        player = Player.instance;
 
         normalDelta = firstItemPos.magnitude;
         radius = 0;
@@ -52,16 +52,15 @@ public class Inventory : MonoBehaviour
         light2InitialPosition = light2.gameObject.transform.localPosition;
         light1InitialRange = light1.range;
         light2InitialRange = light2.range;
-
-        trimObjectsList = new List<GameObject>();
     }
 
     private void Update()
     {
         bool openInventoryKey = Input.GetKeyDown(KeyCode.Tab);
-        bool useCurrentItemKey1 = Input.GetKeyDown(KeyCode.Mouse0);
-        bool useCurrentItemKey2 = Input.GetKeyDown(KeyCode.Mouse1);
-        bool releaseCurrentItemKey = Input.GetKeyDown(KeyCode.R);
+        bool releaseCurrentItemKey = Input.GetKeyDown(KeyCode.G);
+        bool mouse0Key = Input.GetKeyDown(KeyCode.Mouse0);
+        bool mouse1Key = Input.GetKeyDown(KeyCode.Mouse1);
+        bool rKey = Input.GetKeyDown(KeyCode.R);
         if (isOpened)
         {
             Vector3 delta = centerTransform.position - player.gameObject.transform.position;
@@ -81,11 +80,8 @@ public class Inventory : MonoBehaviour
                 OpenInventory();
             }
         }
-        if (currentAnims != null)
-        {
-            if (useCurrentItemKey1 && currentAnims.Length > 0) UseCurrentItem(currentAnims[0]);
-            if (useCurrentItemKey2 && currentAnims.Length > 1) UseCurrentItem(currentAnims[1]);
-        }
+        if (mouse0Key || mouse1Key || rKey) currentItem?.Use(mouse0Key, mouse1Key, rKey);
+        
         if (releaseCurrentItemKey) ReleaseCurrentItem();
     }
     public void OpenInventory()
@@ -142,9 +138,6 @@ public class Inventory : MonoBehaviour
         planeTransform.gameObject.SetActive(false);
         light1.gameObject.SetActive(false);
         light2.gameObject.SetActive(false);
-
-        foreach (GameObject o in trimObjectsList) Destroy(o);
-        trimObjectsList.Clear();
     }
     public void PickupItem(Item item)
     {
@@ -157,33 +150,20 @@ public class Inventory : MonoBehaviour
     {
         DropCurrentItem();
         currentItem = item;
+        currentItem.SetUsable(animator);
         currentItem.gameObject.transform.parent = player.armTransform;
         currentItem.gameObject.transform.localPosition = -currentItem.handle.localPosition;
         currentItem.gameObject.transform.localRotation = Quaternion.LookRotation(currentItem.forwardPointer.localPosition);
         currentItem.GetComponent<Rigidbody>().isKinematic = true;
         currentItem.GetComponent<Collider>().enabled = false;
-
-        currentAnims = new AnimationClip[currentItem.actions.Length];
-        int actionI = 0;
-        foreach (Item.Action a in currentItem.actions)
-        {
-            foreach (AnimationClip clip in player.clips)
-            {
-                if (clip.name == a.animationName)
-                {
-                    currentAnims[actionI] = clip;
-                }
-            }
-            actionI++;
-        }
     }
     void DropCurrentItem()
     {
         if (currentItem)
         {
+            currentItem.SetUnusable();
             currentItem.gameObject.transform.parent = null;
             currentItem.GetComponent<Collider>().enabled = true;
-            currentAnims = null;
             currentItem = null;
         }
     }
@@ -205,18 +185,17 @@ public class Inventory : MonoBehaviour
                 currentItem.GetComponent<Collider>().isTrigger = false;
                 currentItem.GetComponent<Rigidbody>().isKinematic = false;
             }
-            currentAnims = null;
             currentItem = null;
         }
     }
-    public void UseCurrentItem(AnimationClip anim)
-    {
-        if (currentItem && currentItem.isUsable)
-        {
-            currentItem.Use(anim);
-            if (player.animator && anim) player.animator.SetTrigger(anim.name);
-        }
-    }
+    //public void UseCurrentItem(AnimationClip anim)
+    //{
+    //    if (currentItem && currentItem.isUsable)
+    //    {
+    //        currentItem.Use(anim);
+    //        if (player.animator && anim) player.animator.SetTrigger(anim.name);
+    //    }
+    //}
 
     void OnDestroy()
     {

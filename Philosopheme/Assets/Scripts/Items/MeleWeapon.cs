@@ -8,76 +8,48 @@ public class MeleWeapon : Item
     public class Attack : Action
     {
         public float damage;
-    }
 
-    public Transform[] raySources;
-    public Attack[] attacks;
+        List<Health> hittedHealthBoxes = new List<Health>();
 
-    Attack currentAttack;
-    bool isActive = false;
-    List<Health> hittedHealthBoxes = new List<Health>();
-    float useTimer = 0;
-
-    void Start()
-    {
-        isUsable = true;
-        actions = attacks;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (isActive)
+        public override void OnStart() { }
+        public override void OnUpdate()
         {
-            for (int i = 0; i < raySources.Length - 1; i++)
+            for (int i = 0; i < ((MeleWeapon)it).raySources.Length - 1; i++)
             {
-                Vector3 start = raySources[i].position;
-                for (int j = i + 1; j < raySources.Length; j++)
+                Vector3 start = ((MeleWeapon)it).raySources[i].position;
+                for (int j = i + 1; j < ((MeleWeapon)it).raySources.Length; j++)
                 {
-                    Vector3 end = raySources[j].position;
+                    Vector3 end = ((MeleWeapon)it).raySources[j].position;
                     Vector3 dir = end - start;
                     RaycastHit hit;
                     Physics.Raycast(start, dir, out hit, dir.magnitude);
-
                     Health health = hit.collider?.gameObject.GetComponent<Health>();
                     if (health && hittedHealthBoxes.IndexOf(health) == -1)
                     {
-                        health.HealthChange(-currentAttack.damage);
+                        health.HealthChange(-damage);
                         hittedHealthBoxes.Add(health);
                     }
                 }
             }
-            
-            if (useTimer > 0)
-                useTimer -= Time.deltaTime;
-            else
-            {
-                isActive = false;
-                isUsable = true;
-            }
+        }
+        public override void OnEnd()
+        {
+            hittedHealthBoxes.Clear();
         }
     }
 
-    public override void Use(AnimationClip anim)
+    public Transform[] raySources;
+    public Attack attack1;
+    public Attack attack2;
+
+    public override void SetActions()
     {
-        if (!isActive)
-        {
-            currentAttack = null;
-            foreach (Attack a in actions)
-            {
-                if (a.animationName == anim.name)
-                {
-                    currentAttack = a;
-                    break;
-                }
-            }
-            if (currentAttack != null)
-            {
-                hittedHealthBoxes.Clear();
-                useTimer = anim.length;
-                isActive = true;
-                isUsable = false;
-            }
-        }
+        actions = new Action[] { attack1, attack2 };
+    }
+
+    public override void Use(bool mouse0Key, bool mouse1Key, bool rKey)
+    {
+        if (mouse0Key && !attack1.isActual && !attack2.isActual) attack1.Start();
+        if (mouse1Key && !attack1.isActual && !attack2.isActual) attack2.Start();
     }
 }
