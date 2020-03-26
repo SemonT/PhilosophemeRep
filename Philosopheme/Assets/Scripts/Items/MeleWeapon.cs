@@ -9,8 +9,12 @@ public class MeleWeapon : Item
     {
         public float damage;
 
-        List<Health> hittedHealthBoxes = new List<Health>();
+        List<Health> hittedHealthBoxes;
 
+        public override void Initialize()
+        {
+            hittedHealthBoxes = new List<Health>();
+        }
         public override void OnStart() { }
         public override void OnUpdate()
         {
@@ -47,9 +51,9 @@ public class MeleWeapon : Item
         actions = new Action[] { attack1, attack2 };
     }
 
-    public override void Use(bool mouse0Key, bool mouse1Key, bool rKey)
+    public override void Use()
     {
-        if (mouse0Key && !attack1.isActual && !attack2.isActual) attack1.Start();
-        if (mouse1Key && !attack1.isActual && !attack2.isActual) attack2.Start();
+        if (mouse0KeyDown && !attack1.isActual && !attack2.isActual) attack1.Start();
+        if (mouse1KeyDown && !attack1.isActual && !attack2.isActual) attack2.Start();
     }
 }

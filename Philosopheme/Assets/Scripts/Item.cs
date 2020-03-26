@@ -27,7 +27,7 @@ public abstract class Item : Interactable
                 timer -= Time.deltaTime;
             else
             {
-                isActual = false;
+                End();
             }
         }
         public void End()
@@ -35,6 +35,7 @@ public abstract class Item : Interactable
             isActual = false;
             OnEnd();
         }
+        public abstract void Initialize();
         public abstract void OnStart();
         public abstract void OnUpdate();
         public abstract void OnEnd();
@@ -45,23 +46,39 @@ public abstract class Item : Interactable
     public Transform forwardPointer;
 
     [HideInInspector] public bool isUsable = false;
-    [HideInInspector] public Action[] actions;
+    [HideInInspector] public Action[] actions = new Action[0];
     [HideInInspector] public Animator animator;
+
+    [HideInInspector] public bool mouse0Key;
+    [HideInInspector] public bool mouse1Key;
+    [HideInInspector] public bool rKey;
+    [HideInInspector] public bool mouse0KeyDown;
+    [HideInInspector] public bool mouse1KeyDown;
+    [HideInInspector] public bool rKeyDown;
+    [HideInInspector] public bool mouse0KeyUp;
+    [HideInInspector] public bool mouse1KeyUp;
+    [HideInInspector] public bool rKeyUp;
+    [HideInInspector] public float mouse0KeyTimer;
+    [HideInInspector] public float mouse1KeyTimer;
+    [HideInInspector] public float rKeyTimer;
 
     public void SetUsable(Animator animator)
     {
         isUsable = true;
         this.animator = animator;
-        foreach (Action action in actions)
+        if (actions.Length > 0)
         {
-            AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
-            if (clips.Length > 0)
+            foreach (Action action in actions)
             {
-                foreach (AnimationClip clip in clips)
+                AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+                if (clips.Length > 0)
                 {
-                    if (clip.name == action.animationName)
+                    foreach (AnimationClip clip in clips)
                     {
-                        action.animationLength = clip.length;
+                        if (clip.name == action.animationName)
+                        {
+                            action.animationLength = clip.length;
+                        }
                     }
                 }
             }
@@ -80,7 +97,23 @@ public abstract class Item : Interactable
     void Start()
     {
         SetActions();
-        foreach (Action a in actions) a.it = this;
+        foreach (Action a in actions)
+        {
+            a.it = this;
+            a.Initialize();
+        }
+        mouse0Key = false;
+        mouse1Key = false;
+        rKey = false;
+        mouse0KeyDown = false;
+        mouse1KeyDown = false;
+        rKeyDown = false;
+        mouse0KeyUp = false;
+        mouse1KeyUp = false;
+        rKeyUp = false;
+        mouse0KeyTimer = 0;
+        mouse1KeyTimer = 0;
+        rKeyTimer = 0;
     }
     // Update is called once per frame
     void Update()
@@ -101,6 +134,35 @@ public abstract class Item : Interactable
         }
     }
 
+    public void Use(bool mouse0Key, bool mouse1Key, bool rKey, bool mouse0KeyDown, bool mouse1KeyDown, bool rKeyDown, bool mouse0KeyUp, bool mouse1KeyUp, bool rKeyUp)
+    {
+        this.mouse0Key = mouse0Key;
+        this.mouse1Key = mouse1Key;
+        this.rKey = rKey;
+
+        this.mouse0KeyDown = mouse0KeyDown;
+        this.mouse1KeyDown = mouse1KeyDown;
+        this.rKeyDown = rKeyDown;
+
+        this.mouse0KeyUp = mouse0KeyUp;
+        this.mouse1KeyUp = mouse1KeyUp;
+        this.rKeyUp = rKeyUp;
+
+        Use();
+
+        if (mouse0Key)
+            mouse0KeyTimer += Time.deltaTime;
+        else
+            mouse0KeyTimer = 0;
+        if (mouse1Key)
+            mouse1KeyTimer += Time.deltaTime;
+        else
+            mouse1KeyTimer = 0;
+        if (rKey)
+            rKeyTimer += Time.deltaTime;
+        else
+            rKeyTimer = 0;
+    }
     public abstract void SetActions();
-    public abstract void Use(bool mouse0Key, bool mouse1Key, bool rKey);
+    public abstract void Use();
 }

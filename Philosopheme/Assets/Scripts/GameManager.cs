@@ -6,14 +6,14 @@ public class GameManager : MonoBehaviour
 {
     public class PositionTranslationObject
     {
+        public delegate void OnTranslationFinish(GameObject o);
         public Transform transform;
-
-
         public Vector3 target;
         public float smoothTime;
         public float maxSpeed;
         public float error;
         public float delay;
+        public OnTranslationFinish Func;
 
         static public float maxSpeedDefault { get; } = -1f;
         static public float errorDefault { get; } = 0.01f;
@@ -68,25 +68,36 @@ public class GameManager : MonoBehaviour
             currentVelocity = Vector3.zero;
             prevFramePos = transform.localPosition;
         }
+        public PositionTranslationObject(Transform transform, Vector3 target, float smoothTime, float maxSpeed, float error, float delay, OnTranslationFinish Func)
+        {
+            this.transform = transform;
+            this.target = target;
+            this.smoothTime = smoothTime;
+            this.maxSpeed = maxSpeed;
+            this.error = error;
+            this.delay = delay;
+            this.Func = Func;
+            currentVelocity = Vector3.zero;
+            prevFramePos = transform.localPosition;
+        }
     }
     public static GameManager instance;
 
+    public Camera cam;
+
     List<PositionTranslationObject> positionTranslationObjects = new List<PositionTranslationObject>();
+    [HideInInspector] public float camDefaultFieldOfView;
+    [HideInInspector] public MaterialModel defaultMaterialModel;
 
     private void Awake()
     {
         if (!instance) instance = this;
     }
-    public Light mainLight;
-    [HideInInspector] public float mainLightDefaultIntencity;
-    public Camera cam;
-    [HideInInspector]  public float camDefaultFieldOfView;
-
     // Start is called before the first frame update
     void Start()
     {
-        mainLightDefaultIntencity = mainLight.intensity;
         camDefaultFieldOfView = cam.fieldOfView;
+        defaultMaterialModel = GetComponent<MaterialModel>();
     }
 
     void Update()
@@ -116,6 +127,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                o.Func?.Invoke(o.transform.gameObject);
                 o.isReached = true;
                 positionTranslationObjects.Remove(o);
                 i--;
@@ -142,6 +154,10 @@ public class GameManager : MonoBehaviour
     public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed, float error, float delay)
     {
         positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error, delay));
+    }
+    public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed, float error, float delay, PositionTranslationObject.OnTranslationFinish Func)
+    {
+        positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error, delay, Func));
     }
 
     private void OnDestroy()

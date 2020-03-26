@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    public delegate bool ItemFilterCheck(Item i);
     public static Inventory instance;
 
     public Transform centerTransform;
@@ -58,9 +59,18 @@ public class Inventory : MonoBehaviour
     {
         bool openInventoryKey = Input.GetKeyDown(KeyCode.Tab);
         bool releaseCurrentItemKey = Input.GetKeyDown(KeyCode.G);
-        bool mouse0Key = Input.GetKeyDown(KeyCode.Mouse0);
-        bool mouse1Key = Input.GetKeyDown(KeyCode.Mouse1);
-        bool rKey = Input.GetKeyDown(KeyCode.R);
+
+        bool mouse0Key = Input.GetKey(KeyCode.Mouse0);
+        bool mouse1Key = Input.GetKey(KeyCode.Mouse1);
+        bool rKey = Input.GetKey(KeyCode.R);
+
+        bool mouse0KeyDown = Input.GetKeyDown(KeyCode.Mouse0);
+        bool mouse1KeyDown = Input.GetKeyDown(KeyCode.Mouse1);
+        bool rKeyDown = Input.GetKeyDown(KeyCode.R);
+
+        bool mouse0KeyUp = Input.GetKeyUp(KeyCode.Mouse0);
+        bool mouse1KeyUp = Input.GetKeyUp(KeyCode.Mouse1);
+        bool rKeyUp = Input.GetKeyUp(KeyCode.R);
         if (isOpened)
         {
             Vector3 delta = centerTransform.position - player.gameObject.transform.position;
@@ -80,7 +90,7 @@ public class Inventory : MonoBehaviour
                 OpenInventory();
             }
         }
-        if (mouse0Key || mouse1Key || rKey) currentItem?.Use(mouse0Key, mouse1Key, rKey);
+        currentItem?.Use(mouse0Key, mouse1Key, rKey, mouse0KeyDown, mouse1KeyDown, rKeyDown, mouse0KeyUp, mouse1KeyUp, rKeyUp);
         
         if (releaseCurrentItemKey) ReleaseCurrentItem();
     }
@@ -110,7 +120,6 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        GameManager.instance.mainLight.gameObject.SetActive(false);
         planeTransform.gameObject.SetActive(true);
         light1.gameObject.SetActive(true);
         light2.gameObject.SetActive(true);
@@ -134,7 +143,6 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        GameManager.instance.mainLight.gameObject.SetActive(true);
         planeTransform.gameObject.SetActive(false);
         light1.gameObject.SetActive(false);
         light2.gameObject.SetActive(false);
@@ -157,6 +165,20 @@ public class Inventory : MonoBehaviour
         currentItem.GetComponent<Rigidbody>().isKinematic = true;
         currentItem.GetComponent<Collider>().enabled = false;
     }
+    public Item PullItem(ItemFilterCheck f)
+    {
+        foreach (Item item in items)
+            if (f(item))
+            {
+                RemoveItem(item);
+                return item;
+            }
+        return null;
+    }
+    void RemoveItem(Item i)
+    {
+        items.Remove(i);
+    }
     void DropCurrentItem()
     {
         if (currentItem)
@@ -167,6 +189,10 @@ public class Inventory : MonoBehaviour
             currentItem = null;
         }
     }
+    void OnReach(GameObject o)
+    {
+        Destroy(o);
+    }
     void ReleaseCurrentItem()
     {
         if (currentItem)
@@ -175,8 +201,7 @@ public class Inventory : MonoBehaviour
             if (isOpened)
             {
                 currentItem.gameObject.transform.parent = centerTransform;
-                GameManager.instance.TranslatePositionObject(currentItem.gameObject.transform, light1.gameObject.transform.localPosition + Vector3.up * normalDelta, light1.gameObject.transform.localPosition.magnitude);
-                Destroy(currentItem.gameObject, light1.gameObject.transform.localPosition.magnitude);
+                GameManager.instance.TranslatePositionObject(currentItem.gameObject.transform, light1.gameObject.transform.localPosition + Vector3.up * normalDelta, light1.gameObject.transform.localPosition.magnitude, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, 0, OnReach);
             }
             else
             {
@@ -188,14 +213,6 @@ public class Inventory : MonoBehaviour
             currentItem = null;
         }
     }
-    //public void UseCurrentItem(AnimationClip anim)
-    //{
-    //    if (currentItem && currentItem.isUsable)
-    //    {
-    //        currentItem.Use(anim);
-    //        if (player.animator && anim) player.animator.SetTrigger(anim.name);
-    //    }
-    //}
 
     void OnDestroy()
     {
