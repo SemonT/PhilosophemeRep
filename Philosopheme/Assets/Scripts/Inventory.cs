@@ -160,8 +160,10 @@ public class Inventory : MonoBehaviour
         currentItem = item;
         currentItem.SetUsable(animator);
         currentItem.gameObject.transform.parent = player.armTransform;
-        currentItem.gameObject.transform.localPosition = -currentItem.handle.localPosition;
-        currentItem.gameObject.transform.localRotation = Quaternion.LookRotation(currentItem.forwardPointer.localPosition);
+        currentItem.gameObject.transform.localPosition = -currentItem.handleBasis.localPosition;
+        //currentItem.gameObject.transform.localRotation = currentItem.handleBasis.localRotation;
+        currentItem.gameObject.transform.localRotation = Quaternion.identity * new Quaternion(currentItem.handleBasis.localRotation.x, currentItem.handleBasis.localRotation.y, currentItem.handleBasis.localRotation.z, -currentItem.handleBasis.localRotation.w);
+        //currentItem.gameObject.transform.localRotation *= currentItem.handleBasis.localRotation;
         currentItem.GetComponent<Rigidbody>().isKinematic = true;
         currentItem.GetComponent<Collider>().enabled = false;
     }

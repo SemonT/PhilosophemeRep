@@ -81,13 +81,23 @@ public class GameManager : MonoBehaviour
             prevFramePos = transform.localPosition;
         }
     }
+    [System.Serializable]
+    public class MaterialPack
+    {
+        public string packName;
+        public GameObject[] bulletHits;
+        public GameObject[] bulletHoles;
+        public GameObject[] bulletRicochets;
+        public GameObject[] bulletHitEffects;
+        public GameObject[] clubHits;
+    }
     public static GameManager instance;
 
     public Camera cam;
+    public MaterialPack[] materialPacks;
 
     List<PositionTranslationObject> positionTranslationObjects = new List<PositionTranslationObject>();
     [HideInInspector] public float camDefaultFieldOfView;
-    [HideInInspector] public MaterialModel defaultMaterialModel;
 
     private void Awake()
     {
@@ -97,7 +107,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         camDefaultFieldOfView = cam.fieldOfView;
-        defaultMaterialModel = GetComponent<MaterialModel>();
+        MaterialModel.Initialise();
     }
 
     void Update()

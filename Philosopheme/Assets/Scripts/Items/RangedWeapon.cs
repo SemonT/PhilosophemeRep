@@ -7,8 +7,7 @@ public class RangedWeapon : Item
     [System.Serializable]
     public class Shoot : Action
     {
-        public Transform bulletStartPoint;
-        public Transform bulletDirectionPoint;
+        public Transform bulletBasis;
 
         static float airDensity = 0.02f;
         static float powBase = 1.004f;
@@ -26,7 +25,7 @@ public class RangedWeapon : Item
         }
         public override void Initialize()
         {
-            fireEffect = bulletStartPoint.GetComponent<ParticleSystem>();
+            fireEffect = bulletBasis.GetComponent<ParticleSystem>();
             currentBullet = null;
         }
         void SimulateStep(Vector3 start, Vector3 dir, float k0)
@@ -36,7 +35,7 @@ public class RangedWeapon : Item
             if (hit1.collider)
             {
                 MaterialModel materialModel = hit1.collider.gameObject.GetComponent<MaterialModel>();
-                if (materialModel == null) materialModel = GameManager.instance.defaultMaterialModel;
+                if (!materialModel) materialModel = MaterialModel.defaultMaterialModel;
                 float delta = hit1.distance;
                 float k = k0 + delta * airDensity * 60f / currentBullet.penetration;
                 Debug.DrawLine(start, hit1.point, Color.blue, 100000f);
@@ -48,13 +47,16 @@ public class RangedWeapon : Item
                     float ricochetRatio = (angle / newAngle) / refractionMultiplier;
                     if (ricochetRatio < ricochetMinimalRatio)
                     {
-                        GameObject o = Instantiate(
-                            materialModel.bulletHitPrefab,
-                            hit1.point + hit1.normal * 0.01f,
-                            Quaternion.LookRotation(-hit1.normal)
+                        if (materialModel.pack.bulletHoles.Length > 0)
+                        {
+                            GameObject o = Instantiate(
+                                materialModel.pack.bulletHoles[Random.Range(0, materialModel.pack.bulletHoles.Length)],
+                                hit1.point + hit1.normal * 0.005f,
+                                Quaternion.LookRotation(-hit1.normal)
                             );
-                        o.transform.SetParent(hit1.collider.gameObject.transform, true);
-
+                            o.transform.SetParent(hit1.collider.gameObject.transform, true);
+                            o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                        }
                         Vector3 normalComponent = -hit1.normal.normalized * Mathf.Cos(newAngle);
                         Vector3 tangentComponent = Vector3.Cross(hit1.normal, Vector3.Cross(hit1.normal, -dir)).normalized * Mathf.Sin(newAngle);
                         //Debug.DrawLine(hit1.point, hit1.point + normalComponent, Color.blue, 100000f);
@@ -93,12 +95,16 @@ public class RangedWeapon : Item
                             Debug.DrawLine(hit1.point, hit2.point, Color.red, 100000f);
                             if (k < h)
                             {
-                                Instantiate(
-                                    materialModel.bulletHitPrefab,
-                                    hit2.point + hit2.normal * 0.01f,
-                                    Quaternion.LookRotation(-hit2.normal),
-                                    hit2.collider.gameObject.transform
-                                );
+                                if (materialModel.pack.bulletHoles.Length > 0)
+                                {
+                                    GameObject o = Instantiate(
+                                        materialModel.pack.bulletHoles[Random.Range(0, materialModel.pack.bulletHoles.Length)],
+                                        hit2.point + hit2.normal * 0.005f,
+                                        Quaternion.LookRotation(-hit2.normal)
+                                    );
+                                    o.transform.SetParent(hit2.collider.gameObject.transform, true);
+                                    o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                                }
 
                                 angle = Vector3.Angle(dir, hit2.normal) * Mathf.PI / 180;
                                 newAngle = Mathf.Asin(Mathf.Sin(angle) * refractionMultiplier);
@@ -115,11 +121,35 @@ public class RangedWeapon : Item
                     {
                         Vector3 normalComponent = hit1.normal.normalized * Mathf.Cos(angle);
                         Vector3 tangentComponent = Vector3.Cross(hit1.normal, Vector3.Cross(hit1.normal, -dir)).normalized * Mathf.Sin(angle);
+                        if (materialModel.pack.bulletRicochets.Length > 0)
+                        {
+                            GameObject o = Instantiate(
+                                materialModel.pack.bulletRicochets[Random.Range(0, materialModel.pack.bulletRicochets.Length)],
+                                hit1.point + hit1.normal * 0.005f,
+                                Quaternion.LookRotation(-hit1.normal)
+                            );
+                            o.transform.SetParent(hit1.collider.gameObject.transform, true);
+                            MeshRenderer m = o.transform.GetComponentInChildren<MeshRenderer>();
+                            if (m) m.gameObject.transform.rotation = Quaternion.LookRotation(-normalComponent, Vector3.Cross(tangentComponent, normalComponent));
+                        }
                         //Debug.DrawLine(hit1.point, hit1.point + normalComponent, Color.blue, 100000f);
                         //Debug.DrawLine(hit1.point, hit1.point + tangentComponent, Color.green, 100000f);
                         dir = normalComponent + tangentComponent;
                         //Debug.DrawLine(hit1.point + dir * 100f, hit1.point, Color.cyan, 100000f);
                         SimulateStep(hit1.point, dir, k);
+                    }
+                }
+                else
+                {
+                    if (materialModel.pack.bulletHits.Length > 0)
+                    {
+                        GameObject o = Instantiate(
+                            materialModel.pack.bulletHits[Random.Range(0, materialModel.pack.bulletHits.Length)],
+                            hit1.point + hit1.normal * 0.005f,
+                            Quaternion.LookRotation(-hit1.normal)
+                        );
+                        o.transform.SetParent(hit1.collider.gameObject.transform, true);
+                        o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
                     }
                 }
             }
@@ -141,8 +171,8 @@ public class RangedWeapon : Item
 
                 fireEffect?.Play();
                 SimulateStep(
-                    bulletStartPoint.position,
-                    bulletDirectionPoint.position - bulletStartPoint.position,
+                    bulletBasis.position,
+                    bulletBasis.forward,
                     0);
             }
         }
@@ -186,7 +216,7 @@ public class RangedWeapon : Item
     public class JerkShutter : Action
     {
         public Ammo chamberAmmo;
-        public Transform extractor;
+        public Transform extractorBasis;
         
         public void Jerk()
         {
@@ -198,7 +228,8 @@ public class RangedWeapon : Item
                 Collider collider = chamberAmmo.gameObject.GetComponent<Collider>();
                 collider.enabled = true;
                 collider.isTrigger = false;
-                chamberAmmo.gameObject.transform.position = extractor.position;
+                chamberAmmo.gameObject.transform.position = extractorBasis.position;
+                chamberAmmo.gameObject.transform.rotation = Quaternion.LookRotation(extractorBasis.forward);
             }
             chamberAmmo = magazineAmmo[0];
             for (int i = 0; i < magazineAmmo.Length - 1; i++)
@@ -225,9 +256,8 @@ public class RangedWeapon : Item
     [System.Serializable]
     public class ShowAmmo : Action
     {
-        public Transform magazineTransform;
-        public Transform AmmoVisualisationPointTransform;
-        public Transform AmmoVisualisationGuideTransform;
+        public Transform magazineBasis;
+        public Transform visualisationBasis;
         public float visualisationPositionDelta = 0.01f;
         public float visualisationTimeDelta = 0.1f;
 
@@ -247,10 +277,10 @@ public class RangedWeapon : Item
             {
                 GameObject o = jr.chamberAmmo.gameObject;
                 o.SetActive(true);
-                o.transform.SetParent(AmmoVisualisationPointTransform);
-                o.transform.position = magazineTransform.position;
+                o.transform.SetParent(visualisationBasis);
+                o.transform.position = magazineBasis.position;
                 GameManager.instance.TranslatePositionObject(o.transform, Vector3.zero, visualisationTimeDelta, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault / 10, re.magazineAmmo.Length * visualisationTimeDelta);
-                o.transform.localRotation = Quaternion.LookRotation(AmmoVisualisationPointTransform.position - AmmoVisualisationGuideTransform.position);
+                o.transform.rotation = Quaternion.LookRotation(visualisationBasis.forward);
                 delta += visualisationPositionDelta;
             }
             for (int i = 0; i < re.magazineAmmo.Length; i++)
@@ -258,11 +288,11 @@ public class RangedWeapon : Item
                 GameObject o = re.magazineAmmo[i]?.gameObject;
                 if (!o) break;
                 o.SetActive(true);
-                o.transform.SetParent(AmmoVisualisationPointTransform);
-                o.transform.position = magazineTransform.position;
-                GameManager.instance.TranslatePositionObject(o.transform, (AmmoVisualisationPointTransform.position - magazineTransform.position).normalized * delta, visualisationTimeDelta, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault / 10, (re.magazineAmmo.Length - i - 1) * visualisationTimeDelta);
+                o.transform.SetParent(visualisationBasis);
+                o.transform.position = magazineBasis.position;
+                GameManager.instance.TranslatePositionObject(o.transform, -visualisationBasis.up * delta, visualisationTimeDelta, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault / 10, (re.magazineAmmo.Length - i - 1) * visualisationTimeDelta);
                 //o.transform.localPosition = (AmmoVisualisationPointTransform.position - magazineTransform.position).normalized * delta;
-                o.transform.localRotation = Quaternion.LookRotation(AmmoVisualisationPointTransform.position - AmmoVisualisationGuideTransform.position);
+                o.transform.rotation = Quaternion.LookRotation(visualisationBasis.forward);
                 delta += visualisationPositionDelta;
             }
         }
@@ -274,14 +304,14 @@ public class RangedWeapon : Item
             if (jr.chamberAmmo)
             {
                 GameObject o = jr.chamberAmmo.gameObject;
-                GameManager.instance.TranslatePositionObject(o.transform, magazineTransform.position - AmmoVisualisationPointTransform.position, visualisationTimeDelta, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, timeDelta, HideAmmo);
+                GameManager.instance.TranslatePositionObject(o.transform, magazineBasis.position - visualisationBasis.position, visualisationTimeDelta, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, timeDelta, HideAmmo);
                 timeDelta += visualisationTimeDelta;
             }
             for (int i = 0; i < re.magazineAmmo.Length; i++)
             {
                 GameObject o = re.magazineAmmo[i]?.gameObject;
                 if (!o) break;
-                GameManager.instance.TranslatePositionObject(o.transform, magazineTransform.position - AmmoVisualisationPointTransform.position, visualisationTimeDelta, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, timeDelta, HideAmmo);
+                GameManager.instance.TranslatePositionObject(o.transform, magazineBasis.position - visualisationBasis.position, visualisationTimeDelta, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, timeDelta, HideAmmo);
                 timeDelta += visualisationTimeDelta;
             }
         }

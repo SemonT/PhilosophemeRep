@@ -9,11 +9,11 @@ public class MeleWeapon : Item
     {
         public float damage;
 
-        List<Health> hittedHealthBoxes;
+        List<GameObject> hittedObjects;
 
         public override void Initialize()
         {
-            hittedHealthBoxes = new List<Health>();
+            hittedObjects = new List<GameObject>();
         }
         public override void OnStart() { }
         public override void OnUpdate()
@@ -27,18 +27,33 @@ public class MeleWeapon : Item
                     Vector3 dir = end - start;
                     RaycastHit hit;
                     Physics.Raycast(start, dir, out hit, dir.magnitude);
-                    Health health = hit.collider?.gameObject.GetComponent<Health>();
-                    if (health && hittedHealthBoxes.IndexOf(health) == -1)
+                    if (hit.collider)
                     {
-                        health.HealthChange(-damage);
-                        hittedHealthBoxes.Add(health);
+                        GameObject obj = hit.collider.gameObject;
+                        if (hittedObjects.IndexOf(obj) == -1)
+                        {
+                            hittedObjects.Add(obj);
+                            MaterialModel materialModel = obj.GetComponent<MaterialModel>();
+                            if (!materialModel) materialModel = MaterialModel.defaultMaterialModel;
+                            if (materialModel.pack.clubHits.Length > 0)
+                            {
+                                GameObject o = Instantiate(
+                                    materialModel.pack.clubHits[Random.Range(0, materialModel.pack.clubHits.Length)],
+                                    hit.point + hit.normal * 0.005f,
+                                    Quaternion.LookRotation(-hit.normal)
+                                );
+                                o.transform.SetParent(obj.transform, true);
+                                o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                            }
+                            obj.GetComponent<Health>()?.HealthChange(-damage);
+                        }
                     }
                 }
             }
         }
         public override void OnEnd()
         {
-            hittedHealthBoxes.Clear();
+            hittedObjects.Clear();
         }
     }
 

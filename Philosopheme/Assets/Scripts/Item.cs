@@ -42,8 +42,7 @@ public abstract class Item : Interactable
     }
 
     public string className = "undefined";
-    public Transform handle;
-    public Transform forwardPointer;
+    public Transform handleBasis;
 
     [HideInInspector] public bool isUsable = false;
     [HideInInspector] public Action[] actions = new Action[0];
