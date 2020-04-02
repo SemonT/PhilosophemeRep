@@ -7,10 +7,13 @@ public class Interaction : MonoBehaviour
 {
     Transform cameraTransform;
     public float InteractionMaxDistance;
+    public float InscriptionMaxDistance;
     public Image pointerImage;
     public Sprite pointerInactive;
     public Sprite pointerActive;
-    bool isActive = false;
+
+    bool isPointerActive = false;
+    Inscription currentInscription;
 
     // Start is called before the first frame update
     void Start()
@@ -29,8 +32,8 @@ public class Interaction : MonoBehaviour
             Interactable interactable = hit.transform?.gameObject.GetComponent<Interactable>();
             if (interactable && interactable.isInteractable)
             {
-                if (!isActive) pointerImage.sprite = pointerActive;
-                isActive = true;
+                if (!isPointerActive) pointerImage.sprite = pointerActive;
+                isPointerActive = true;
 
                 if (interact)
                 {
@@ -39,18 +42,48 @@ public class Interaction : MonoBehaviour
             }
             else
             {
-                if (isActive)
+                if (isPointerActive)
                 {
                     pointerImage.sprite = pointerInactive;
-                    isActive = false;
+                    isPointerActive = false;
                 }
             }
         } else
         {
-            if (isActive)
+            if (isPointerActive)
             {
                 pointerImage.sprite = pointerInactive;
-                isActive = false;
+                isPointerActive = false;
+            }
+        }
+        
+        if (hit.distance < 100)
+        {
+            Inscription inscription = hit.transform?.gameObject.GetComponent<Inscription>();
+            if (inscription)
+            {
+                if (currentInscription)
+                {
+                    if (currentInscription != inscription)
+                    {
+                        currentInscription.SetActive(false);
+                        currentInscription = inscription;
+                        currentInscription.SetActive(true);
+                    }
+                    else if (!currentInscription.isActive)
+                    {
+                        currentInscription.SetActive(true);
+                    }
+                }
+                else
+                {
+                    currentInscription = inscription;
+                    currentInscription.SetActive(true);
+                }
+            }
+            else if (currentInscription)
+            {
+                currentInscription = null;
             }
         }
     }

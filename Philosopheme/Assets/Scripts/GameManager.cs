@@ -94,6 +94,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public Camera cam;
+    public Inscription.Parameters inscriptionParameters;
     public MaterialPack[] materialPacks;
 
     List<PositionTranslationObject> positionTranslationObjects = new List<PositionTranslationObject>();
@@ -108,6 +109,7 @@ public class GameManager : MonoBehaviour
     {
         camDefaultFieldOfView = cam.fieldOfView;
         MaterialModel.Initialise();
+        Inscription.parameters = inscriptionParameters;
     }
 
     void Update()
