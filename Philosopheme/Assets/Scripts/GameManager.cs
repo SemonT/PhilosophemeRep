@@ -103,13 +103,14 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         if (!instance) instance = this;
+        camDefaultFieldOfView = cam.fieldOfView;
+        MaterialModel.Initialise();
+        Inscription.parameters = inscriptionParameters;
     }
     // Start is called before the first frame update
     void Start()
     {
-        camDefaultFieldOfView = cam.fieldOfView;
-        MaterialModel.Initialise();
-        Inscription.parameters = inscriptionParameters;
+        
     }
 
     void Update()

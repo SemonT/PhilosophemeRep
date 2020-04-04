@@ -14,16 +14,98 @@ public class Inscription : MonoBehaviour
         public float maxDistance = 8f;
         public float revealTime = 0.3f;
     }
+    [System.Serializable]
+    public class Philosopheme
+    {
+        public string initial = "А";
+        public string ultimate = "Б";
+    }
+    [System.Serializable]
+    public class Quaesitum
+    {
+        public Color initialColor = Color.clear;
+        public Color ultimateColor = Color.clear;
+        public Philosopheme[] philosophemes;
+    }
     public static Parameters parameters;
+    public static Quaesitum[] quaesitums;
+    public static int currentQuaesitumI;
+    public static Quaesitum currentQuaesitum;
+    public static int currentPhilosophemeI;
+    public static Philosopheme currentPhilosopheme;
+    public static List<Inscription> philosophemeInscriptions = new List<Inscription>();
 
+    public static void Initialise(Quaesitum[] quaesitums, int currentQuaesitumI, int currentPhilosophemeI)
+    {
+        Inscription.quaesitums = quaesitums;
+        Inscription.currentQuaesitumI = currentQuaesitumI;
+        Inscription.currentPhilosophemeI = currentPhilosophemeI;
+        currentQuaesitum = quaesitums[currentQuaesitumI];
+        currentPhilosopheme = currentQuaesitum.philosophemes[currentPhilosophemeI];
+    }
+    static Vector2 Vector3To2Y(Vector3 v)
+    {
+        return new Vector2(v.x, v.z);
+    }
+    static float DegreeToRad(float a)
+    {
+        return a * Mathf.PI / 180;
+    }
+    static Color CorrectColor(Color c)
+    {
+        c.r = 1 - (1 - c.r) / parameters.whiteCorrection;
+        c.g = 1 - (1 - c.g) / parameters.whiteCorrection;
+        c.b = 1 - (1 - c.b) / parameters.whiteCorrection;
+        return c;
+    }
+    static Color InvertColor(Color c)
+    {
+        c.r = 1 - c.r;
+        c.g = 1 - c.g;
+        c.b = 1 - c.b;
+        return c;
+    }
+    static void GoNext()
+    {
+        currentPhilosophemeI++;
+        if (currentPhilosophemeI >= currentQuaesitum.philosophemes.Length)
+        {
+            currentPhilosophemeI = 0;
+            currentQuaesitumI++;
+            if (currentQuaesitumI < quaesitums.Length)
+            {
+                currentQuaesitum = quaesitums[currentQuaesitumI];
+
+                foreach (Inscription i in philosophemeInscriptions)
+                {
+                    i.SetBackgroundAndCursorColor(CorrectColor(currentQuaesitum.initialColor), parameters.emission);
+                }
+            }
+            else
+            {
+                print("END OF PHILOSOPHEMES!!!");
+                return;
+            }
+        }
+        currentPhilosopheme = currentQuaesitum.philosophemes[currentPhilosophemeI];
+        foreach (Inscription i in philosophemeInscriptions)
+        {
+            i.SetText(currentPhilosopheme.initial);
+        }
+    }
+
+    public bool isPhilosopheme = false;
     public string inscription;
-    public Transform centerBasis;
-    public GameObject textField;
-    public GameObject background;
     public Color initialColor;
+    public Transform centerBasis;
+    public Transform textField;
+    public GameObject text;
+    public GameObject background;
+    public GameObject cursor;
 
     TextMeshPro textMesh;
     MeshRenderer backgroundMesh;
+    MeshRenderer cursorMesh;
     Vector3 normalScale = Vector3.zero;
     Vector3 normalPos = Vector3.zero;
     float maxInscriptionAngleSize;
@@ -31,35 +113,81 @@ public class Inscription : MonoBehaviour
     bool isGrowing = false;
     bool isWaiting = false;
     float timer = 0f;
+    ParticleSystem effect;
+    Vector3 normalShapeScale;
+    float normalStartSize;
+    float normalStartSpeed;
+    int normalEmissionCount;
+    bool activated = false;
 
-    Vector2 Vector3To2Y(Vector3 v)
+    public void NotimeDeactivate()
     {
-        return new Vector2(v.x, v.z);
+        SetActive(false);
+        timer = 0;
+        centerBasis.localPosition = Vector3.zero;
+        centerBasis.localScale = Vector3.zero;
+        print("Nuuuu");
     }
-    float DegreeToRad(float a)
+    public void ActivatePhilosopheme()
     {
-        return a * Mathf.PI / 180;
+        if (isPhilosopheme && !activated)
+        {
+            activated = true;
+            Color newColor;
+            if (currentQuaesitum.ultimateColor == Color.clear)
+            {
+                newColor = CorrectColor(InvertColor(currentQuaesitum.initialColor));
+            }
+            else
+            {
+                newColor = CorrectColor(currentQuaesitum.ultimateColor);
+            }
+            PlayEffect();
+            SetBackgroundAndCursorColor(newColor, parameters.emission);
+            SetText(currentPhilosopheme.ultimate);
+
+            philosophemeInscriptions.Remove(this);
+            print(philosophemeInscriptions.Count);
+            GoNext();
+        }
+        else
+        {
+            print("IS NOT PHILOSOPHEME!!!");
+        }
     }
-    Color CorrectColor(Color c)
-    {
-        c.r = 1 - (1 - c.r) / parameters.whiteCorrection;
-        c.g = 1 - (1 - c.g) / parameters.whiteCorrection;
-        c.b = 1 - (1 - c.b) / parameters.whiteCorrection;
-        return c;
-    }
-    Color InvertColor(Color c)
-    {
-        c.r = 1 - c.r;
-        c.g = 1 - c.g;
-        c.b = 1 - c.b;
-        return c;
-    }
-    void SetBackgroundColor(Color c, float emission)
+    void SetBackgroundAndCursorColor(Color c, float emission)
     {
         backgroundMesh.material.SetColor("_EmissionColor", c * emission);
+        cursorMesh.material.SetColor("_EmissionColor", c * emission);
     }
+    public void PlayEffect()
+    {
+        if (centerBasis.localScale.x > 0)
+        {
+            ParticleSystem.MainModule main;
+            ParticleSystem.ShapeModule shape;
+            ParticleSystem.Burst burst;
 
-    void SetText(string text, bool invert)
+            main = effect.main;
+
+            shape = effect.shape;
+            shape.scale = new Vector3(normalShapeScale.x * background.transform.localScale.x, normalShapeScale.y * background.transform.localScale.y, normalShapeScale.z);
+
+            main.startSize = normalStartSize * centerBasis.localScale.x;
+
+            main.startSpeed = normalStartSpeed * centerBasis.localScale.x;
+
+            burst = effect.emission.GetBurst(0);
+            burst.count = normalEmissionCount * background.transform.localScale.x * background.transform.localScale.y;
+            effect.emission.SetBurst(0, burst);
+
+            string parameterName = "_EmissionColor";
+            effect.GetComponent<Renderer>().material.SetColor(parameterName, backgroundMesh.GetComponent<Renderer>().material.GetColor(parameterName));
+
+            effect.Play();
+        }
+    }
+    void SetText(string text)
     {
         textMesh.text = text;
         TMP_TextInfo textInfo = textMesh.GetTextInfo(textMesh.text);
@@ -69,21 +197,37 @@ public class Inscription : MonoBehaviour
             1f
         );
         background.transform.localScale = normalScale;
-
-        if (invert)
-        {
-            SetBackgroundColor(CorrectColor(InvertColor(initialColor)), parameters.emission);
-        }
+        textField.transform.localPosition = new Vector3(0, normalScale.y, 0);
+        cursor.transform.localScale = new Vector3(cursor.transform.localScale.x, 0, cursor.transform.localScale.z);
     }
     // Start is called before the first frame update
     void Start()
     {
-        textMesh = textField.GetComponent<TextMeshPro>();
+        textMesh = text.GetComponent<TextMeshPro>();
         backgroundMesh = background.GetComponent<MeshRenderer>();
-        SetBackgroundColor(CorrectColor(initialColor), parameters.emission);
-        SetText(inscription, false);
+        cursorMesh = cursor.GetComponent<MeshRenderer>();
         maxInscriptionAngleSize = GameManager.instance.cam.fieldOfView * 1.1f;
         centerBasis.localScale = Vector3.zero;
+        centerBasis.gameObject.SetActive(true);
+
+        effect = background.GetComponentInChildren<ParticleSystem>();
+        normalShapeScale = effect.shape.scale;
+        ParticleSystem.MainModule main = effect.main;
+        normalStartSize = main.startSize.constant;
+        normalStartSpeed = main.startSpeed.constant;
+        normalEmissionCount = (int)effect.emission.GetBurst(0).count.constant;
+
+        if (isPhilosopheme)
+        {
+            philosophemeInscriptions.Add(this);
+            SetBackgroundAndCursorColor(CorrectColor(currentQuaesitum.initialColor), parameters.emission);
+            SetText(currentPhilosopheme.initial);
+        }
+        else
+        {
+            SetBackgroundAndCursorColor(CorrectColor(initialColor), parameters.emission);
+            SetText(inscription);
+        }
     }
 
     public void SetActive(bool a)
@@ -133,10 +277,14 @@ public class Inscription : MonoBehaviour
                     }
                 }
 
+                Vector3 fieldPos = textField.position;
+                Vector3 fieldObjVec = objPos - fieldPos;
+
                 Vector3 camForwardVec = GameManager.instance.cam.gameObject.transform.forward;          //Debug.DrawRay(camPos, camForwardVec, Color.green, Time.deltaTime);
 
                 float camObjAngle = Vector2.Angle(Vector3To2Y(camForwardVec), Vector3To2Y(camObjVec));
                 bool isVisible = camObjAngle < maxInscriptionAngleSize / 2 && goodDistance;
+
 
                 Vector3 centerNormalVec = centerBasis.right * normalScale.x * centerBasis.lossyScale.x / 2;                //Debug.DrawRay(centerBasis.position, centerNormalVec, Color.blue, Time.deltaTime);
                 Vector3 centerPos = centerBasis.position;
@@ -170,7 +318,7 @@ public class Inscription : MonoBehaviour
                         Vector2 pos1 = Vector3To2Y(camPos);
                         Vector2 pos2 = Vector3To2Y(objPos);
                         Vector2 vec1 = Vector3To2Y(targetVec);
-                        Vector2 vec2 = Vector3To2Y(transform.right);
+                        Vector2 vec2 = Vector3To2Y(centerNormalVec);
 
                         float a1 = vec1.y / vec1.x;
                         float a2 = vec2.y / vec2.x;
@@ -185,7 +333,6 @@ public class Inscription : MonoBehaviour
                         //{
                         //    return a2 * x + b2;
                         //}
-
                         //Debug.DrawLine(new Vector3(-9999, camPos.y, f1(-9999)), new Vector3(9999, camPos.y, f1(9999)), Color.red, Time.deltaTime);
                         //Debug.DrawLine(new Vector3(-9999, camPos.y, f2(-9999)), new Vector3(9999, camPos.y, f2(9999)), Color.blue, Time.deltaTime);
                         //print("F1 = " + a1 + " * x + " + b1);
@@ -201,10 +348,8 @@ public class Inscription : MonoBehaviour
                         normalPos = resultPos - objPos;
                     }
                 }
-                else
-                {
-                    SetActive(false);
-                }
+                else if (isGrowing) SetActive(false);
+
                 if (2 * maxHalfSize < normalScale.x * transform.lossyScale.x)
                 {
                     centerBasis.localScale = Vector3.one * 2 * maxHalfSize * (1 - 0.01f) * timer / (parameters.revealTime * normalScale.x * transform.lossyScale.x);
@@ -215,16 +360,28 @@ public class Inscription : MonoBehaviour
                 }
                 centerBasis.position = objPos + normalPos * timer / parameters.revealTime;
                 transform.rotation = Quaternion.LookRotation(camPos - centerBasis.position, Vector3.up);
+
+                // Требует оптимизации
+                if (centerBasis.localScale.x != 0)
+                {
+                    cursor.transform.localScale = new Vector3(
+                    cursor.transform.localScale.x,
+                    fieldObjVec.magnitude / transform.lossyScale.y / centerBasis.localScale.x,
+                    cursor.transform.localScale.z
+                    );
+                    cursor.transform.localPosition = new Vector3(-centerBasis.localPosition.x / (2 * centerBasis.localScale.x), textField.localPosition.y / 2, textField.localPosition.z - 0.01f);
+                    //Debug.DrawRay(fieldPos, fieldObjVec, Color.blue, Time.deltaTime);
+                    cursor.transform.localRotation = Quaternion.LookRotation(Vector3.back, new Vector3(-centerBasis.localPosition.x / centerBasis.localScale.x, -textField.localPosition.y, 0));
+                }
+                else
+                {
+                    cursor.transform.localScale = new Vector3(cursor.transform.localScale.x, 0, cursor.transform.localScale.z);
+                }
             }
             else
             {
                 isActive = false;
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            SetText("Мясной панч!", true);
         }
     }
 }

@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Interaction : MonoBehaviour
 {
+    static Inscription lastInscription;
+
     Transform cameraTransform;
     public float InteractionMaxDistance;
     public float InscriptionMaxDistance;
@@ -13,7 +15,6 @@ public class Interaction : MonoBehaviour
     public Sprite pointerActive;
 
     bool isPointerActive = false;
-    Inscription currentInscription;
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +35,6 @@ public class Interaction : MonoBehaviour
             {
                 if (!isPointerActive) pointerImage.sprite = pointerActive;
                 isPointerActive = true;
-
                 if (interact)
                 {
                     interactable.Interact();
@@ -57,33 +57,33 @@ public class Interaction : MonoBehaviour
             }
         }
         
-        if (hit.distance < 100)
+        if (
+            (!Inventory.isOpened || Inventory.isOpened && Inventory.isDeployed) &&
+            !npc.isDialogueOpened &&
+            hit.collider
+            )
         {
-            Inscription inscription = hit.transform?.gameObject.GetComponent<Inscription>();
+            Inscription inscription = hit.transform?.gameObject.GetComponentInChildren<Inscription>();
             if (inscription)
             {
-                if (currentInscription)
+                if (lastInscription)
                 {
-                    if (currentInscription != inscription)
+                    if (lastInscription != inscription)
                     {
-                        currentInscription.SetActive(false);
-                        currentInscription = inscription;
-                        currentInscription.SetActive(true);
+                        lastInscription.SetActive(false);
+                        lastInscription = inscription;
+                        lastInscription.SetActive(true);
                     }
-                    else if (!currentInscription.isActive)
+                    else if (!lastInscription.isActive)
                     {
-                        currentInscription.SetActive(true);
+                        lastInscription.SetActive(true);
                     }
                 }
                 else
                 {
-                    currentInscription = inscription;
-                    currentInscription.SetActive(true);
+                    lastInscription = inscription;
+                    lastInscription.SetActive(true);
                 }
-            }
-            else if (currentInscription)
-            {
-                currentInscription = null;
             }
         }
     }

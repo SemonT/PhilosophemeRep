@@ -24,7 +24,8 @@ public class Inventory : MonoBehaviour
     Animator animator;
     Vector3 playerStartPosition;
     Quaternion playerStartRotation;
-    [HideInInspector] public bool isOpened;
+    static public bool isOpened;
+    static public bool isDeployed;
     Item currentItem;
 
     float normalDelta;
@@ -96,11 +97,16 @@ public class Inventory : MonoBehaviour
     }
     public void OpenInventory()
     {
+        isDeployed = false;
         isOpened = true;
         playerStartPosition = player.gameObject.transform.position;
         playerStartRotation = player.gameObject.transform.rotation;
         player.gameObject.transform.SetPositionAndRotation(centerTransform.position, centerTransform.rotation);
 
+        void OnInventoryDeploy(GameObject o)
+        {
+            if (!isDeployed) isDeployed = true;
+        }
         Vector3 pos = firstItemPos;
         for (int i = 0; i < items.Count; i++)
         {
@@ -111,8 +117,11 @@ public class Inventory : MonoBehaviour
                 itemObject.SetActive(true);
                 itemObject.transform.parent = centerTransform;
                 itemObject.transform.localPosition = Vector3.zero;
-                GameManager.instance.TranslatePositionObject(itemObject.transform, pos, 0.5f);
+                GameManager.instance.TranslatePositionObject(itemObject.transform, pos, 0.5f, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, 0, OnInventoryDeploy);
                 itemObject.transform.localRotation = Random.rotation;
+
+                Inscription inscription = itemObject.GetComponentInChildren<Inscription>();
+                inscription?.NotimeDeactivate();
 
                 radius = pos.magnitude;
 
@@ -166,6 +175,8 @@ public class Inventory : MonoBehaviour
         //currentItem.gameObject.transform.localRotation *= currentItem.handleBasis.localRotation;
         currentItem.GetComponent<Rigidbody>().isKinematic = true;
         currentItem.GetComponent<Collider>().enabled = false;
+
+        currentItem.GetComponentInChildren<Inscription>().NotimeDeactivate();
     }
     public Item PullItem(ItemFilterCheck f)
     {

@@ -6,6 +6,7 @@ public abstract class npc : Interactable
 {
     public delegate void NPCupdate(bool leftKey, bool rightKey);
     public static NPCupdate npcUpdateContainer;
+    public static bool isDialogueOpened = false;
 
     public Transform portraitTransform;
     public Transform lightTransform;
@@ -24,7 +25,7 @@ public abstract class npc : Interactable
     Light spotLight;
     Transform cameraTransform;
     bool _active = false;
-    bool Active
+    public bool Active
     {
         get
         {
@@ -34,11 +35,14 @@ public abstract class npc : Interactable
         {
             if (value)
             {
+                isDialogueOpened = true;
                 isInteractable = false;
+                GetComponentInChildren<Inscription>().NotimeDeactivate();
                 letterMatrix.CreateDialogue();
             }
             else
             {
+                isDialogueOpened = false;
                 isInteractable = true;
                 letterMatrix.DestroyDialogue();
             }

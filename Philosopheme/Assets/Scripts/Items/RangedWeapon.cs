@@ -90,7 +90,6 @@ public class RangedWeapon : Item
                                 float S = S1 + S2;
                                 float damage = S * 2;
                                 health.HealthChange(-damage);
-                                print("damage " + damage);
                             }
                             Debug.DrawLine(hit1.point, hit2.point, Color.red, 100000f);
                             if (k < h)

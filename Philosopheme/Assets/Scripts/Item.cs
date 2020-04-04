@@ -123,7 +123,7 @@ public abstract class Item : Interactable
     public override void Interact()
     {
         Inventory inv = Inventory.instance;
-        if (inv.isOpened)
+        if (Inventory.isOpened)
         {
             inv.TakeItem(this);
         }
