@@ -94,7 +94,6 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public Camera cam;
-    public Inscription.Parameters inscriptionParameters;
     public MaterialPack[] materialPacks;
 
     List<PositionTranslationObject> positionTranslationObjects = new List<PositionTranslationObject>();
@@ -105,7 +104,6 @@ public class GameManager : MonoBehaviour
         if (!instance) instance = this;
         camDefaultFieldOfView = cam.fieldOfView;
         MaterialModel.Initialise();
-        Inscription.parameters = inscriptionParameters;
     }
     // Start is called before the first frame update
     void Start()

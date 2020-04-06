@@ -37,7 +37,6 @@ public abstract class npc : Interactable
             {
                 isDialogueOpened = true;
                 isInteractable = false;
-                GetComponentInChildren<Inscription>().NotimeDeactivate();
                 letterMatrix.CreateDialogue();
             }
             else

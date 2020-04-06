@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class Interaction : MonoBehaviour
 {
-    static Inscription lastInscription;
-
     Transform cameraTransform;
     public float InteractionMaxDistance;
     public float InscriptionMaxDistance;
@@ -54,36 +52,6 @@ public class Interaction : MonoBehaviour
             {
                 pointerImage.sprite = pointerInactive;
                 isPointerActive = false;
-            }
-        }
-        
-        if (
-            (!Inventory.isOpened || Inventory.isOpened && Inventory.isDeployed) &&
-            !npc.isDialogueOpened &&
-            hit.collider
-            )
-        {
-            Inscription inscription = hit.transform?.gameObject.GetComponentInChildren<Inscription>();
-            if (inscription)
-            {
-                if (lastInscription)
-                {
-                    if (lastInscription != inscription)
-                    {
-                        lastInscription.SetActive(false);
-                        lastInscription = inscription;
-                        lastInscription.SetActive(true);
-                    }
-                    else if (!lastInscription.isActive)
-                    {
-                        lastInscription.SetActive(true);
-                    }
-                }
-                else
-                {
-                    lastInscription = inscription;
-                    lastInscription.SetActive(true);
-                }
             }
         }
     }

@@ -63,7 +63,7 @@ public class Health : MonoBehaviour
             SceneManager.LoadScene("DeathScene");
         }
 
-        /*Destroy(transform.gameObject, deathTime);*/ GetComponentInChildren<Inscription>()?.ActivatePhilosopheme();
+        /*Destroy(transform.gameObject, deathTime);*/
     }
 
     public void ResetStaminaTimer()

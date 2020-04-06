@@ -120,9 +120,6 @@ public class Inventory : MonoBehaviour
                 GameManager.instance.TranslatePositionObject(itemObject.transform, pos, 0.5f, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, 0, OnInventoryDeploy);
                 itemObject.transform.localRotation = Random.rotation;
 
-                Inscription inscription = itemObject.GetComponentInChildren<Inscription>();
-                inscription?.NotimeDeactivate();
-
                 radius = pos.magnitude;
 
                 pos += Vector3.Cross(pos, Vector3.up).normalized * normalDelta;
@@ -175,8 +172,6 @@ public class Inventory : MonoBehaviour
         //currentItem.gameObject.transform.localRotation *= currentItem.handleBasis.localRotation;
         currentItem.GetComponent<Rigidbody>().isKinematic = true;
         currentItem.GetComponent<Collider>().enabled = false;
-
-        currentItem.GetComponentInChildren<Inscription>().NotimeDeactivate();
     }
     public Item PullItem(ItemFilterCheck f)
     {
