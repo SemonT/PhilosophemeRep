@@ -586,9 +586,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3815971058845715682}
-  - component: {fileID: 3815971058845715681}
+  - component: {fileID: 8265959055655225357}
   m_Layer: 5
-  m_Name: Inscription
+  m_Name: Mark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -615,7 +615,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3815971058845715681
+--- !u!114 &8265959055655225357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -624,13 +624,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3815971058845715683}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7342c08a1aac3f4b83e1388a83414af, type: 3}
+  m_Script: {fileID: 11500000, guid: 0255d9e5289e40149a6269b729309bfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  field: {fileID: 3815971057661766878}
+  field: {fileID: 3815971057661766879}
   cursor: {fileID: 3815971058834990331}
   background: {fileID: 3815971059673421575}
-  textMesh: {fileID: 3815971059698707753}
+  text: {fileID: 3815971059698707755}
 --- !u!1 &3815971059673421575
 GameObject:
   m_ObjectHideFlags: 0

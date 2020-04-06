@@ -274,6 +274,10 @@ public abstract class npc : Interactable
             npc.lightTransform.gameObject.SetActive(true);
 
             GameManager.instance.cam.fieldOfView = 110;
+            for (int i = 0; i < GameManager.instance.sceneLights.Length; i++)
+            {
+                GameManager.instance.sceneLights[i].gameObject.SetActive(false);
+            }
         }
         public Block AddBlock()
         {
@@ -325,6 +329,10 @@ public abstract class npc : Interactable
             npc.lightTransform.gameObject.SetActive(false);
 
             GameManager.instance.cam.fieldOfView = GameManager.instance.camDefaultFieldOfView;
+            for (int i = 0; i < GameManager.instance.sceneLights.Length; i++)
+            {
+                GameManager.instance.sceneLights[i].gameObject.SetActive(true);
+            }
         }
     }
     LetterMatrix letterMatrix;

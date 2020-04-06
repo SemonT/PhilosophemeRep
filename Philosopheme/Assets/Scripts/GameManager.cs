@@ -91,9 +91,71 @@ public class GameManager : MonoBehaviour
         public GameObject[] bulletHitEffects;
         public GameObject[] clubHits;
     }
+    public delegate bool VisibilityFilter(GameObject go);
     public static GameManager instance;
 
+    public static bool CheckForLinearVisibility(GameObject go1, GameObject go2, float maxDistance, int layerMask, QueryTriggerInteraction q, VisibilityFilter f)
+    {
+        Vector3 pos1 = go1.transform.position;
+        Vector3 pos2 = go2.transform.position;
+        Vector3 dir = pos2 - pos1;
+        float distance = dir.magnitude;
+        if (distance > maxDistance) return false;
+
+        bool isVisible = true;
+        RaycastHit[] hits = Physics.RaycastAll(pos1, dir, distance, layerMask, q);
+        if (hits.Length == 0) return false;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            GameObject go = hits[i].collider.gameObject;
+            if (
+                go == go1 || go == go2 ||
+                f != null && f.Invoke(go)
+                ) continue;
+            isVisible = false;
+            break;
+        }
+        return isVisible;
+    }
+    public static Vector2 WorldPositionToUIPos(Camera cam, RectTransform rect, Vector3 pos)
+    {
+        Vector2 viewportPos = cam.WorldToViewportPoint(pos);
+        Vector2 centerPos = viewportPos - Vector2.one * 0.5f;
+        Vector2 canvasPos = new Vector2(
+            rect.sizeDelta.x * centerPos.x,
+            rect.sizeDelta.y * centerPos.y
+            );
+        return canvasPos;
+    }
+    public static Rect WorldBoundsToUIRect(Camera cam, RectTransform rectTransform, Bounds b)
+    {
+        Vector3 cen = b.center;
+        Vector3 ext = b.extents;
+
+        Vector2[] extentPoints = new Vector2[8]
+        {
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x + ext.x, cen.y + ext.y, cen.z + ext.z)),
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x + ext.x, cen.y + ext.y, cen.z - ext.z)),
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x + ext.x, cen.y - ext.y, cen.z + ext.z)),
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x + ext.x, cen.y - ext.y, cen.z - ext.z)),
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x - ext.x, cen.y + ext.y, cen.z + ext.z)),
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x - ext.x, cen.y + ext.y, cen.z - ext.z)),
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x - ext.x, cen.y - ext.y, cen.z + ext.z)),
+            WorldPositionToUIPos(cam, rectTransform, new Vector3(cen.x - ext.x, cen.y - ext.y, cen.z - ext.z))
+        };
+        Vector2 min = extentPoints[0];
+        Vector2 max = extentPoints[0];
+        foreach (Vector2 v in extentPoints)
+        {
+            min = Vector2.Min(min, v);
+            max = Vector2.Max(max, v);
+        }
+        return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
+    }
+
     public Camera cam;
+    public Light[] sceneLights;
     public MaterialPack[] materialPacks;
 
     List<PositionTranslationObject> positionTranslationObjects = new List<PositionTranslationObject>();

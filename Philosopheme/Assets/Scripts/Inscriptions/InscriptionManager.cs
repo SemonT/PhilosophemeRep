@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class InscriptionManager : MonoBehaviour
 {
@@ -12,83 +10,111 @@ public class InscriptionManager : MonoBehaviour
         public string enquiry;
         public string reply;
     }
+
     [System.Serializable]
     public class Philosopheme
     {
-        public Color enquiryColor;
-        public Color replyColor;
+        public Color enquiryColor = Color.black;
+        public Color replyColor = Color.black;
         public Question[] questions;
     }
+    public delegate void OnPhilosophemeUpdate();
+
+    static OnPhilosophemeUpdate PhilosophemeUpdateEvent;
     static int currentPhilosophemeIndex;
-    static Philosopheme currentPhilosopheme;
+    public static Philosopheme CurrentPhilosopheme { get; private set; }
     static int currentQuestionIndex;
-    static Question currentQuestion;
+    public static Question CurrentQuestion { get; private set; }
+    public static Inscription lastInscription { get; set; }
+    static Philosopheme[] philosophemes;
 
-    static void GoToNextQuestion()
+    public static void SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
     {
-
+        PhilosophemeUpdateEvent += f;
+    }
+    public static void UnsubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
+    {
+        PhilosophemeUpdateEvent -= f;
+    }
+    public static void ForgetInscription(Inscription i)
+    {
+        if (i == lastInscription) lastInscription = null;
+    }
+    static void OnQuestionReply()
+    {
+        currentQuestionIndex++;
+        if (currentQuestionIndex >= CurrentPhilosopheme.questions.Length)
+        {
+            currentQuestionIndex = 0;
+            currentPhilosophemeIndex++;
+            if (currentPhilosophemeIndex >= philosophemes.Length)
+            {
+                print("_!_END OF PHILOSOPHEMES_!_");
+                currentPhilosophemeIndex = 0;
+            }
+        }
+        CurrentPhilosopheme = philosophemes[currentPhilosophemeIndex];
+        CurrentQuestion = CurrentPhilosopheme.questions[currentQuestionIndex];
+        PhilosophemeUpdateEvent?.Invoke();
     }
 
-    public GameObject inscriptionsSpace;
-    public GameObject inscriptionPrefab;
+    public float maxDistance = 10f;
     public float revealTime = 0.25f;
     public Vector2 padding;
-
-    public Philosopheme[] philosophemes;
+    public Philosopheme[] philosophemesList;
+    public Camera cam;
+    public GameObject inscriptionsSpace;
+    public GameObject markPrefab;
 
     Transform camTransform;
-    List<Inscription> currentInscriptions;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        Camera cam = GameManager.instance.cam;
         camTransform = cam.gameObject.transform;
 
-        Inscription.Init(cam, inscriptionsSpace, revealTime, padding);
-        currentInscriptions = new List<Inscription>();
+        Inscription.Init(markPrefab, cam, inscriptionsSpace, maxDistance, revealTime, padding, OnQuestionReply);
 
+        philosophemes = philosophemesList;
         currentPhilosophemeIndex = 0;
         currentQuestionIndex = 0;
-        currentPhilosopheme = philosophemes[currentPhilosophemeIndex];
-        currentQuestion = currentPhilosopheme.questions[currentQuestionIndex];
+        CurrentPhilosopheme = philosophemes[currentPhilosophemeIndex];
+        CurrentQuestion = CurrentPhilosopheme.questions[currentQuestionIndex];
     }
 
     // Update is called once per frame
     void LateUpdate()
     {
-        for (int i = 0; i < currentInscriptions.Count; i++)
+        if (
+            !npc.isDialogueOpened
+            )
         {
-            if (!currentInscriptions[i])
+            RaycastHit hit;
+            Physics.Raycast(camTransform.position, camTransform.forward, out hit);
+            if (hit.collider)
             {
-                currentInscriptions.RemoveAt(i);
-                i--;
-            }
-        }
-
-        RaycastHit hit;
-        Physics.Raycast(camTransform.position, camTransform.forward, out hit);
-        if (hit.collider)
-        {
-            GameObject go = hit.collider.gameObject;
-            Health h = go.GetComponent<Health>();
-            if (h)
-            {
-                bool isInList = false;
-                foreach (Inscription i in currentInscriptions)
+                GameObject go = hit.collider.gameObject;
+                Inscription inscr = go.GetComponent<Inscription>();
+                if (inscr)
                 {
-                    if (i.targetObj == go)
+                    if (lastInscription)
                     {
-                        isInList = true;
-                        break;
+                        if (inscr != lastInscription && inscr.Show())
+                        {
+                            lastInscription.Hide();
+                            lastInscription = inscr;
+                        }
+                    }
+                    else
+                    {
+                        if (inscr.Show()) lastInscription = inscr;
                     }
                 }
-                if (!isInList)
-                {
-                    for (int i = 0; i < currentInscriptions.Count; i++) currentInscriptions[i].Collapse();
-                    currentInscriptions.Add(Instantiate(inscriptionPrefab).GetComponent<Inscription>().SetTarget(go));
-                }
             }
+        }
+        else if (lastInscription)
+        {
+            lastInscription.Hide();
+            lastInscription = null;
         }
     }
 }

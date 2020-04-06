@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9175667329255174004}
   m_Layer: 0
-  m_Name: defaultBulletRicochet
+  m_Name: defaultBulletRicochet1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 259826086445833146}
   - component: {fileID: 749869669289952635}
   - component: {fileID: 1922390204680015184}
-  - component: {fileID: 9193423965653155127}
   m_Layer: 0
   m_Name: Texture
   m_TagString: Untagged
@@ -111,17 +110,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &9193423965653155127
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5464563750350650288}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}

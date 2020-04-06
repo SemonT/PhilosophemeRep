@@ -6,15 +6,19 @@ public class FransisBacon : npc
 {
     public override float F(float x)
     {
-        return x * x;
+        return x * x / 2;
     }
     public override void InteractionTree()
     {
         DialogueO();
 
         BlockO();
-        Text("Приветос ребятос!");
-        Text("Ух, каков молокососс!");
+        Text("Здравствуй, человек, говорящий с портретом!");
+        Text("Я умён, а ты не очень");
+        BlockC();
+
+        BlockO();
+        Text("Поэтому я буду ждать, пока ты нажмёшь на секретную кнопку (M)");
         string condition = Condition(RandomCondition);
         BlockC();
 
@@ -25,7 +29,7 @@ public class FransisBacon : npc
         if (option1 == "Я нажал секретную кнопку!")
         {
             BlockO();
-            Text("Хочешь немного философии?");
+            Text("Молодец! Хочешь немного философии?");
             string option2 = Option(new string[2] { "Да", "Нет" });
             BlockC();
             switch (option2)
@@ -41,7 +45,7 @@ public class FransisBacon : npc
                 case "Нет":
                     {
                         BlockO();
-                        Text("Лох!");
+                        Text("Казуальщика ответ!");
                         BlockC();
                         break;
                     }
