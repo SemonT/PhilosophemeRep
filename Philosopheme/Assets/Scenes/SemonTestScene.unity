@@ -2096,13 +2096,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 916897110}
-  m_LocalRotation: {x: 0.47992414, y: -0.36619675, z: 0.08123366, w: 0.7930787}
+  m_LocalRotation: {x: 0.59369856, y: -0.34982252, z: 0.13536319, w: 0.7119151}
   m_LocalPosition: {x: -3.9, y: 16.7, z: 6.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: -235.158, y: 118.33299, z: -202.936}
+  m_LocalEulerAnglesHint: {x: -250.057, y: 98.479, z: -220.749}
 --- !u!20 &920557229 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 8605272064850869727, guid: 1a81531f5a9a46542a731a948c3e448b,
@@ -4885,7 +4885,7 @@ PrefabInstance:
     - target: {fileID: 1913977448873424614, guid: 1d7fafce3b749624d8fb602cb623012b,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4746579150361919399, guid: 1d7fafce3b749624d8fb602cb623012b,
         type: 3}
