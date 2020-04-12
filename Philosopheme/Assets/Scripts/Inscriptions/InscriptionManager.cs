@@ -16,9 +16,13 @@ public class InscriptionManager : MonoBehaviour
     {
         public Color enquiryColor = Color.black;
         public Color replyColor = Color.black;
+        public string replyPostfix;
         public Question[] questions;
     }
     public delegate void OnPhilosophemeUpdate();
+
+    public static Camera cam;
+    static float maxVisibleDistance;
 
     static OnPhilosophemeUpdate PhilosophemeUpdateEvent;
     static int currentPhilosophemeIndex;
@@ -28,6 +32,10 @@ public class InscriptionManager : MonoBehaviour
     public static Inscription lastInscription { get; set; }
     static Philosopheme[] philosophemes;
 
+    public static bool CheckForVisibility(GameObject go)
+    {
+        return GameManager.CheckForLinearVisibility(cam.gameObject, go, maxVisibleDistance, ~0, QueryTriggerInteraction.Collide, GameManager.DefaultVisibilityFilter);
+    }
     public static void SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
     {
         PhilosophemeUpdateEvent += f;
@@ -62,7 +70,6 @@ public class InscriptionManager : MonoBehaviour
     public float revealTime = 0.25f;
     public Vector2 padding;
     public Philosopheme[] philosophemesList;
-    public Camera cam;
     public GameObject inscriptionsSpace;
     public GameObject markPrefab;
 
@@ -70,6 +77,8 @@ public class InscriptionManager : MonoBehaviour
 
     private void Awake()
     {
+        cam = GameManager.instance.cam;
+        maxVisibleDistance = maxDistance;
         camTransform = cam.gameObject.transform;
 
         Inscription.Init(markPrefab, cam, inscriptionsSpace, maxDistance, revealTime, padding, OnQuestionReply);
@@ -88,13 +97,13 @@ public class InscriptionManager : MonoBehaviour
             !npc.isDialogueOpened
             )
         {
-            RaycastHit hit;
-            Physics.Raycast(camTransform.position, camTransform.forward, out hit);
-            if (hit.collider)
+            RaycastHit[] hits = Physics.RaycastAll(camTransform.position, camTransform.forward, maxDistance);
+            for (int i = 0; i < hits.Length; i++)
             {
+                RaycastHit hit = hits[i];
                 GameObject go = hit.collider.gameObject;
-                Inscription inscr = go.GetComponent<Inscription>();
-                if (inscr)
+                Inscription inscr = hit.collider.gameObject.GetComponent<Inscription>();
+                if (inscr && CheckForVisibility(go))
                 {
                     if (lastInscription)
                     {
@@ -108,6 +117,7 @@ public class InscriptionManager : MonoBehaviour
                     {
                         if (inscr.Show()) lastInscription = inscr;
                     }
+                    break;
                 }
             }
         }

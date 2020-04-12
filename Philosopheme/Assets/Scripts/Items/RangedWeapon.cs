@@ -31,7 +31,7 @@ public class RangedWeapon : Item
         void SimulateStep(Vector3 start, Vector3 dir, float k0)
         {
             RaycastHit hit1;
-            Physics.Raycast(start, dir, out hit1);
+            Physics.Raycast(start, dir, out hit1, 10000f, ~0, QueryTriggerInteraction.Ignore);
             if (hit1.collider)
             {
                 MaterialModel materialModel = hit1.collider.gameObject.GetComponent<MaterialModel>();
@@ -327,7 +327,7 @@ public class RangedWeapon : Item
     }
     public override void Use()
     {
-        if (mouse0KeyDown && !shoot.isActual && !jerkShutter.isActual && !reload.isActual && !showAmmo.isActual) shoot.Start();
+        if (mouse0KeyDown && !shoot.isActual && !jerkShutter.isActual && !reload.isActual && !showAmmo.isActual && jerkShutter.chamberAmmo) shoot.Start();
         if (mouse1KeyDown && !shoot.isActual && !jerkShutter.isActual && !reload.isActual && !showAmmo.isActual) jerkShutter.Start();
         if (rKeyUp && rKeyTimer < 0.5f && !shoot.isActual && !jerkShutter.isActual && !reload.isActual && !showAmmo.isActual) reload.Start();
         if (rKey && rKeyTimer >= 0.5f && !shoot.isActual && !jerkShutter.isActual && !reload.isActual && !showAmmo.isActual) showAmmo.Start();

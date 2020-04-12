@@ -390,6 +390,7 @@ MonoBehaviour:
     timer: 0
     isActual: 0
     damage: 30
+    minDamageSpeed: 3.5
   attack2:
     animationName: Club2
     it: {fileID: 0}
@@ -397,6 +398,7 @@ MonoBehaviour:
     timer: 0
     isActual: 0
     damage: 40
+    minDamageSpeed: 3.5
 --- !u!114 &1522750228424884061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,8 +412,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isQuestion: 0
-  text: "\u041C\u0435\u0442\u0430\u043B\u043B\u0438\u0447\u0435\u0441\u043A\u0438\u0439
-    \u0434\u043E\u043D\u043E\u0441\u0438\u0442\u0435\u043B\u044C \u0438\u0434\u0435\u0439"
+  isReply: 1
+  text: "\u0414\u0443\u0431\u0438\u043D\u0430"
   color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1522750228454828100
 GameObject:
@@ -471,7 +473,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 17dc61d2a80a5174c93fea74e7a24540, type: 2}
+  - {fileID: 2100000, guid: 0d019b9af628f6544a8d26d54c23f38c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -7,6 +7,7 @@ public abstract class Item : Interactable
     public abstract class Action
     {
         public string animationName;
+        public Animation animation;
 
         [HideInInspector] public Item it;
         [HideInInspector] public float animationLength;

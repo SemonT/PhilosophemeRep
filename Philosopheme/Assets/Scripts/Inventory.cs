@@ -134,6 +134,9 @@ public class Inventory : MonoBehaviour
         light2.gameObject.transform.localPosition = light2InitialPosition * radius;
         light1.range = light1InitialRange * radius;
         light2.range = light2InitialRange * radius;
+
+        GameManager.TurnOffMainLights();
+        Lamp.TurnOffAllLamps();
     }
     public void CloseInventory()
     {
@@ -152,6 +155,9 @@ public class Inventory : MonoBehaviour
         planeTransform.gameObject.SetActive(false);
         light1.gameObject.SetActive(false);
         light2.gameObject.SetActive(false);
+
+        GameManager.TurnOnMainLights();
+        Lamp.TurnOnAllLamps();
     }
     public void PickupItem(Item item)
     {

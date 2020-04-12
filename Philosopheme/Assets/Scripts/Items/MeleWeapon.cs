@@ -8,47 +8,69 @@ public class MeleWeapon : Item
     public class Attack : Action
     {
         public float damage;
+        public float minDamageSpeed = 3.5f;
 
+        Vector3[] raySourcesPrevPoss;
         List<GameObject> hittedObjects;
 
         public override void Initialize()
         {
             hittedObjects = new List<GameObject>();
         }
-        public override void OnStart() { }
+        public override void OnStart()
+        {
+            ref Transform[] raySources = ref ((MeleWeapon)it).raySources;
+            int length = raySources.Length;
+            raySourcesPrevPoss = new Vector3[length];
+            for (int i = 0; i < length; i++)
+            {
+                raySourcesPrevPoss[i] = raySources[i].position;
+            }
+        }
         public override void OnUpdate()
         {
-            for (int i = 0; i < ((MeleWeapon)it).raySources.Length - 1; i++)
+            ref Transform[] raySources = ref ((MeleWeapon)it).raySources;
+
+            for (int i = 0; i < raySources.Length - 1; i++)
             {
-                Vector3 start = ((MeleWeapon)it).raySources[i].position;
-                for (int j = i + 1; j < ((MeleWeapon)it).raySources.Length; j++)
+                Vector3 start = raySources[i].position;
+                float speed = (start - raySourcesPrevPoss[i]).magnitude / Time.deltaTime;
+                if (speed > minDamageSpeed)
                 {
-                    Vector3 end = ((MeleWeapon)it).raySources[j].position;
-                    Vector3 dir = end - start;
-                    RaycastHit hit;
-                    Physics.Raycast(start, dir, out hit, dir.magnitude);
-                    if (hit.collider)
+                    for (int j = i + 1; j < raySources.Length; j++)
                     {
-                        GameObject obj = hit.collider.gameObject;
-                        if (hittedObjects.IndexOf(obj) == -1)
+                        Vector3 end = raySources[j].position;
+                        Vector3 dir = end - start;
+
+                        Debug.DrawLine(start, end, Color.red, Time.deltaTime);
+
+                        RaycastHit hit;
+                        Physics.Raycast(start, dir, out hit, dir.magnitude);
+                        if (hit.collider)
                         {
-                            hittedObjects.Add(obj);
-                            MaterialModel materialModel = obj.GetComponent<MaterialModel>();
-                            if (!materialModel) materialModel = MaterialModel.defaultMaterialModel;
-                            if (materialModel.pack.clubHits.Length > 0)
+                            GameObject obj = hit.collider.gameObject;
+                            if (hittedObjects.IndexOf(obj) == -1)
                             {
-                                GameObject o = Instantiate(
-                                    materialModel.pack.clubHits[Random.Range(0, materialModel.pack.clubHits.Length)],
-                                    hit.point + hit.normal * 0.005f,
-                                    Quaternion.LookRotation(-hit.normal)
-                                );
-                                o.transform.SetParent(obj.transform, true);
-                                o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                                hittedObjects.Add(obj);
+                                MaterialModel materialModel = obj.GetComponent<MaterialModel>();
+                                if (!materialModel) materialModel = MaterialModel.defaultMaterialModel;
+                                if (materialModel.pack.clubHits.Length > 0)
+                                {
+                                    GameObject o = Instantiate(
+                                        materialModel.pack.clubHits[Random.Range(0, materialModel.pack.clubHits.Length)],
+                                        hit.point + hit.normal * 0.005f,
+                                        Quaternion.LookRotation(-hit.normal)
+                                    );
+                                    o.transform.SetParent(obj.transform, true);
+                                    o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                                }
+                                obj.GetComponent<Health>()?.HealthChange(-damage);
                             }
-                            obj.GetComponent<Health>()?.HealthChange(-damage);
                         }
                     }
                 }
+
+                raySourcesPrevPoss[i] = raySources[i].position;
             }
         }
         public override void OnEnd()

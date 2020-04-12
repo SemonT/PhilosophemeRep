@@ -31,6 +31,7 @@ public class Inscription : MonoBehaviour
     }
 
     public bool isQuestion;
+    public bool isReply;
     public string text;
     public Color color = Color.white;
 
@@ -88,15 +89,16 @@ public class Inscription : MonoBehaviour
         markRectTransform.SetParent(spaceRectTransform);
         SetHidden();
 
-        if (isQuestion)
+        if (isQuestion || isReply)
         {
             InscriptionManager.SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate);
             OnPhilosophemeUpdate();
+            if (isReply) SetColor(color);
         }
         else
         {
-            SetText(text);
             SetColor(color);
+            SetText(text);
         }
     }
     void LateUpdate()
@@ -108,7 +110,7 @@ public class Inscription : MonoBehaviour
             if (!(
                 viewportPos.x > 0 && viewportPos.x < 1 &&
                 viewportPos.y > 0 && viewportPos.y < 1 &&
-                CheckForVisibility()
+                InscriptionManager.CheckForVisibility(gameObject)
                 ))
                 if (timer > 0)
                 {
@@ -184,14 +186,17 @@ public class Inscription : MonoBehaviour
 
         }
     }
-    bool CheckForVisibility()
-    {
-        return GameManager.CheckForLinearVisibility(cam.gameObject, gameObject, maxDistance, ~0, QueryTriggerInteraction.Collide, null);
-    }
     void OnPhilosophemeUpdate()
     {
-        SetText(InscriptionManager.CurrentQuestion.enquiry);
-        SetColor(InscriptionManager.CurrentPhilosopheme.enquiryColor);
+        if (isQuestion)
+        {
+            SetText(InscriptionManager.CurrentQuestion.enquiry);
+            SetColor(InscriptionManager.CurrentPhilosopheme.enquiryColor);
+        }
+        else
+        {
+            SetText(text + " " + InscriptionManager.CurrentPhilosopheme.replyPostfix);
+        }
     }
     public void Reply()
     {
@@ -231,7 +236,7 @@ public class Inscription : MonoBehaviour
     }
     public bool Show()
     {
-        if (!CheckForVisibility()) return false;
+        if (!InscriptionManager.CheckForVisibility(gameObject)) return false;
         IsActive = true;
         growDeltaMultiplier = 1;
         return true;

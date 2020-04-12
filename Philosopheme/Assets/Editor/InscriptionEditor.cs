@@ -14,6 +14,7 @@ public class InscriptionEditor : Editor
 
         if (!myScript.isQuestion)
         {
+            myScript.isReply = GUILayout.Toggle(myScript.isReply, "IsReply");
             myScript.text = EditorGUILayout.TextField("Text:", myScript.text);
             myScript.color = EditorGUILayout.ColorField("Color:", myScript.color);
         }

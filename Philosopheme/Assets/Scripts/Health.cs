@@ -63,7 +63,7 @@ public class Health : MonoBehaviour
             SceneManager.LoadScene("DeathScene");
         }
 
-        /*Destroy(transform.gameObject, deathTime);*/ GetComponent<Inscription>().Reply();
+        /*Destroy(transform.gameObject, deathTime);*/ GetComponent<Inscription>()?.Reply();
     }
 
     public void ResetStaminaTimer()

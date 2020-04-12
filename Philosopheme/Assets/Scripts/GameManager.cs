@@ -94,6 +94,12 @@ public class GameManager : MonoBehaviour
     public delegate bool VisibilityFilter(GameObject go);
     public static GameManager instance;
 
+    public static bool DefaultVisibilityFilter(GameObject go)
+    {
+        Renderer r = go.GetComponent<Renderer>();
+        if (r && r.material.shader.name == "Custom/Glass1") return true;
+        return false;
+    }
     public static bool CheckForLinearVisibility(GameObject go1, GameObject go2, float maxDistance, int layerMask, QueryTriggerInteraction q, VisibilityFilter f)
     {
         Vector3 pos1 = go1.transform.position;
@@ -155,11 +161,20 @@ public class GameManager : MonoBehaviour
     }
 
     public Camera cam;
-    public Light[] sceneLights;
+    public Light[] mainLights;
     public MaterialPack[] materialPacks;
 
     List<PositionTranslationObject> positionTranslationObjects = new List<PositionTranslationObject>();
     [HideInInspector] public float camDefaultFieldOfView;
+
+    public static void TurnOnMainLights()
+    {
+        for (int i = 0; i < instance.mainLights.Length; i++) instance.mainLights[i].enabled = true;
+    }
+    public static void TurnOffMainLights()
+    {
+        for (int i = 0; i < instance.mainLights.Length; i++) instance.mainLights[i].enabled = false;
+    }
 
     private void Awake()
     {
@@ -208,29 +223,51 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void TranslatePositionObject(PositionTranslationObject o)
+    {
+        for (int i = 0; i < positionTranslationObjects.Count; i++)
+        {
+            Transform t = positionTranslationObjects[i].transform;
+            if (o.transform == t)
+            {
+                positionTranslationObjects.RemoveAt(i);
+                break;
+            }
+        }
+        positionTranslationObjects.Add(o);
+    }
     public void TranslatePositionObject(ref PositionTranslationObject o)
     {
+        for (int i = 0; i < positionTranslationObjects.Count; i++)
+        {
+            Transform t = positionTranslationObjects[i].transform;
+            if (o.transform == t)
+            {
+                positionTranslationObjects.RemoveAt(i);
+                break;
+            }
+        }
         positionTranslationObjects.Add(o);
     }
     public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime)
     {
-        positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime));
+        TranslatePositionObject(new PositionTranslationObject(t, target, smoothTime));
     }
     public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed)
     {
-        positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed));
+        TranslatePositionObject(new PositionTranslationObject(t, target, smoothTime, maxSpeed));
     }
     public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed, float error)
     {
-        positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error));
+        TranslatePositionObject(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error));
     }
     public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed, float error, float delay)
     {
-        positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error, delay));
+        TranslatePositionObject(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error, delay));
     }
     public void TranslatePositionObject(Transform t, Vector3 target, float smoothTime, float maxSpeed, float error, float delay, PositionTranslationObject.OnTranslationFinish Func)
     {
-        positionTranslationObjects.Add(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error, delay, Func));
+        TranslatePositionObject(new PositionTranslationObject(t, target, smoothTime, maxSpeed, error, delay, Func));
     }
 
     private void OnDestroy()
