@@ -411,10 +411,10 @@ public abstract class npc : Interactable
     }
     public void Execution(ExecutionContainer e)
     {
-        if (!letterMatrix.ignore && !letterMatrix.currentBlockBuilded)
+        if (!letterMatrix.ignore)
         {
             executeCounter++;
-            if (executesMadeCounter < executeCounter)
+            if (/*executesMadeCounter < executeCounter*/true)
             {
                 letterMatrix.currentBlockDone = true;
                 e?.Invoke();

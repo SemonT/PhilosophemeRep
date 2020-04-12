@@ -19,7 +19,7 @@ public class RangedAI : AI
         base.Start();
         fireTime = anime.GetCurrentAnimatorClipInfo(0).Length;
         fireTimer = fireTime;
-        print("Время анимации " + fireTime);
+        //print("Время анимации " + fireTime);
     }
 
     protected override void Update()

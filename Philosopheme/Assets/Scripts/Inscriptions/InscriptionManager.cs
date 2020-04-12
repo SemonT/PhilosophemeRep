@@ -34,7 +34,7 @@ public class InscriptionManager : MonoBehaviour
 
     public static bool CheckForVisibility(GameObject go)
     {
-        return GameManager.CheckForLinearVisibility(cam.gameObject, go, maxVisibleDistance, ~0, QueryTriggerInteraction.Collide, GameManager.DefaultVisibilityFilter);
+        return GameManager.CheckForLinearVisibility(cam.gameObject, go, maxVisibleDistance, ~0, QueryTriggerInteraction.Ignore, GameManager.DefaultVisibilityFilter);
     }
     public static void SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
     {
@@ -102,7 +102,7 @@ public class InscriptionManager : MonoBehaviour
             {
                 RaycastHit hit = hits[i];
                 GameObject go = hit.collider.gameObject;
-                Inscription inscr = hit.collider.gameObject.GetComponent<Inscription>();
+                Inscription inscr = go.GetComponent<Inscription>();
                 if (inscr && CheckForVisibility(go))
                 {
                     if (lastInscription)
