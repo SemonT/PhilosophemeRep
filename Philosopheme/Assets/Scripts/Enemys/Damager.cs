@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StaticGun : Enemy
+public class Damager : MonoBehaviour
 {
 
-  //  public float damage = -30f;
+    public float damage = 12f;
+
+    public bool isActive = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,11 +21,8 @@ public class StaticGun : Enemy
         
     }
 
-
-    /*
     private void OnCollisionEnter(Collision other)
     {
-        other.transform.GetComponent<Health>()?.HealthChange(damage);
+        if (isActive) other.gameObject.GetComponent<Health>()?.HealthChange(-damage);
     }
-    */
 }

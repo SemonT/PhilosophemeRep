@@ -92,6 +92,9 @@ public class GameManager : MonoBehaviour
         public GameObject[] clubHits;
     }
     public delegate bool VisibilityFilter(GameObject go);
+
+    public List<GameObject> creatures = new List<GameObject>();
+
     public static GameManager instance;
 
     public static bool DefaultVisibilityFilter(GameObject go)
