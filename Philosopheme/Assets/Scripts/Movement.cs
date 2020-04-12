@@ -51,16 +51,14 @@ public class Movement : MonoBehaviour
 
         RaycastHit hit;
         Physics.Raycast(origin, -transform.up, out hit);
-        print("1 "  + hit.distance);
 
         if (hit.distance < 0.15f && hit.collider != null)
-        {
-            
+        { 
             playerRB.AddForce(jumpForce * transform.up);
-            print("2   " + hit.distance + "   " + hit.collider.gameObject);
         }
     }
 
+    // Недоработано
     public void Dodge(float x, float y, bool pressed)
     {
         if (pressed) pressCount++;
@@ -78,15 +76,13 @@ public class Movement : MonoBehaviour
         }
     }
 
-    // Надо переписать через RigidBody, иначе проходит сквозь объекты
+    // Надо переписать через RigidBody, ибо проходит сквозь объекты
     public void Sprint(bool moveLock)
     {
         if (!moveLock && health.curStamina > 0)
         {
-            health.ResetStaminaTimer();
             transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, sprintBoost * speed * Time.deltaTime);
-
-            health.curStamina -= health.staminaDrain * Time.deltaTime;
+            health.StaminaDrain(health.staminaDrain, true);
         }
     }
 
@@ -103,9 +99,9 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        /*
         Vector3 origin = transform.localPosition - jumpOrigin * transform.up;
         Debug.DrawLine(origin, origin - 0.15f * transform.up, Color.red);
-        
+        */
     }
 }

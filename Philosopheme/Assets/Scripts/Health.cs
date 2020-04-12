@@ -20,7 +20,7 @@ public class Health : MonoBehaviour
 
     public float curHealth;
     public float curStamina;
-    public float staminaDrain = 7.5f;
+    public float staminaDrain = 15f; //затрата стамины в секунду 
 
     public float stamnaDrainCoff = 1.25f;
 
@@ -63,12 +63,25 @@ public class Health : MonoBehaviour
             SceneManager.LoadScene("DeathScene");
         }
 
-        /*Destroy(transform.gameObject, deathTime);*/ GetComponent<Inscription>()?.Reply();
+
+        GameManager.instance.creatures.Remove(transform.gameObject);
+         GetComponent<Inscription>()?.Reply();
+    //    Destroy(transform.gameObject, deathTime);
     }
 
-    public void ResetStaminaTimer()
+    // float amount в Update() будет тратиться за секунду
+    public void StaminaDrain(float amount, bool inUpdate)
     {
         tempStaminaTimer = staminaRegenTimer;
+
+        if (inUpdate)
+        {
+            curStamina -= amount * Time.deltaTime;
+        }
+        else
+        {
+            curStamina -= amount;
+        }
     }
 
     // Start is called before the first frame update
@@ -77,6 +90,9 @@ public class Health : MonoBehaviour
         curHealth = maxHealth;
         maxStamina = maxHealth;
         curStamina = maxStamina;
+
+        // Если старт для каждого объекта свой
+        GameManager.instance.creatures.Add(transform.gameObject);
     }
 
     // Update is called once per frame

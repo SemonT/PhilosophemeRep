@@ -92,6 +92,9 @@ public class GameManager : MonoBehaviour
         public GameObject[] clubHits;
     }
     public delegate bool VisibilityFilter(GameObject go);
+
+    public List<GameObject> creatures = new List<GameObject>();
+
     public static GameManager instance;
 
     public static bool DefaultVisibilityFilter(GameObject go)
@@ -181,6 +184,8 @@ public class GameManager : MonoBehaviour
         if (!instance) instance = this;
         camDefaultFieldOfView = cam.fieldOfView;
         MaterialModel.Initialise();
+
+        InscriptionManager.instance.Init();
     }
     // Start is called before the first frame update
     void Start()
