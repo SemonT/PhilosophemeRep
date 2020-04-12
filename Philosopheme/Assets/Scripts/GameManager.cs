@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+
+    public List<GameObject> creatures = new List<GameObject>();
+
     public static GameManager instance;
     private void Awake()
     {

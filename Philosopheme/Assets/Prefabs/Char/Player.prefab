@@ -94,9 +94,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd3fcc927400b644b71c5eec1193537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: {x: 0, y: 0, z: 0}
   animator: {fileID: 0}
   clips: []
-  damage: -50
   armTransform: {fileID: 1080050030506009055}
 --- !u!54 &1080050029323051191
 Rigidbody:

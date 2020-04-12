@@ -254,8 +254,11 @@ MonoBehaviour:
   raySources:
   - {fileID: 705569940833803391}
   - {fileID: 705569939545028278}
-  damage1: 30
-  damage2: 0
+  attacks:
+  - animationName: Club1
+    damage: 30
+  - animationName: Club2
+    damage: 40
 --- !u!1 &705569940833803388
 GameObject:
   m_ObjectHideFlags: 0
