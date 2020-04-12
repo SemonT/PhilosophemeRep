@@ -11,7 +11,7 @@ public class MeleeAI : AI
     protected override void Start()
     {
         base.Start();
-        deltaAttack = 1.5f;
+        deltaAttack = 2f;
 
         d = damager.GetComponent<Damager>();
     }

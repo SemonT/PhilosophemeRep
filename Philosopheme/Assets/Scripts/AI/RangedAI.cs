@@ -25,6 +25,7 @@ public class RangedAI : AI
     protected override void Update()
     {
         base.Update();
+
         if (ranged)
         {
             if(fireTimer <= 0)
@@ -54,7 +55,5 @@ public class RangedAI : AI
             fireTimer -= Time.deltaTime;
         }
         else fireTimer = fireTime;
-
-     //   print(fireTimer);
     }
 }

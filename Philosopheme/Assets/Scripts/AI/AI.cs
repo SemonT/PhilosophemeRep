@@ -10,55 +10,66 @@ public abstract class AI : MonoBehaviour
     protected Animator anime;
     protected float maxDist = 500;
     protected float minDist = 2.5f;
-    protected float curDist;
+    protected float curDist = 10000;
     protected bool ranged;
 
     protected float halfAngle = 180f;
-    protected float curAngle;
+    protected float curAngle = 10000;
 
     protected Player player;
 
+    protected Vector3 dd;
+
     // Переменная для милишных ИИ
-    protected  float deltaAttack = 0f;
+    protected float deltaAttack = 0f;
 
-    protected virtual void GetTarget(GameObject other, Vector3 pos, Vector3 dir, float maxDistance, float minDistance, out float currentDistance, out float currentAngle)
+    protected bool Filter(GameObject go)
     {
-        RaycastHit hit;
-        Physics.Raycast(pos, dir, out hit);
+        if (GameManager.DefaultVisibilityFilter(go))
+        {
+            return true;
+        }
+        else
+        {
 
-        /*
-        print(hit.transform.root.name);
-        print(hit.collider.gameObject.transform.name);
-        */
-        // ГОВНО
+            Transform t = go.transform;
+            do
+            {      
+                if (t.gameObject == gameObject)
+                {
+                    return true;
+                }
+                t = t.parent;
+            }
+            while (t);
+        }
+        
+        return false;
+    }
+
+    protected virtual void GetTarget(GameObject other, Vector3 pos, Vector3 dir, float maxDistance, float minDistance, out float currentDistance, out float currentAngle, out Vector3 d)
+    {
+        bool isVisible = GameManager.CheckForLinearVisibility(gameObject, player.gameObject, maxDistance, ~0, QueryTriggerInteraction.Ignore, Filter);
+
         Debug.DrawRay(pos, dir, Color.red);
 
-        Vector3 newPos = hit.collider.gameObject.transform.position;
-        if (hit.transform.Equals(transform))
-        {
-            Vector3 newDir = player.transform.position - newPos;
+        Vector3 deltaD = player.transform.position - transform.position;
 
-            Physics.Raycast(newPos, dir, out hit);
-            Debug.DrawRay(newPos, dir, Color.yellow);
-        }
+   //     Debug.DrawRay(transform.position, deltaD, Color.cyan);
+        currentDistance = deltaD.magnitude;
+        currentAngle = Vector3.Angle(transform.forward, deltaD);
 
-        
+        deltaD.y = 0;
+        d = deltaD;
 
-
-        float temp = hit.distance;
-        currentDistance = 1000000;
-
-        bool isPlayer = hit.transform.GetComponent<Player>() != null;
-
-        currentAngle = Vector3.Angle(transform.forward, dir);
         bool inVisie = currentAngle < halfAngle;
 
-        if ((temp <= maxDistance && isPlayer && inVisie) || (temp <= minDist && isPlayer))
-        {
-            agent.SetDestination(other.transform.position);
-            currentDistance = temp;
-        }
+ //       print(deltaD);
 
+        if (isVisible)
+        {
+            agent.SetDestination(player.transform.position);
+        }
     }
 
     // Start is called before the first frame update
@@ -81,9 +92,11 @@ public abstract class AI : MonoBehaviour
             if (obj != transform.gameObject)
             {
                 Vector3 dir = obj.transform.position - pos;
-                
 
-                GetTarget(obj, pos, dir, maxDist, minDist, out curDist, out curAngle);
+                if (obj.GetComponent<Player>() != null)
+                {
+                    GetTarget(obj, pos, dir, maxDist, minDist, out curDist, out curAngle, out dd);
+                }
             }
         }
         // Ниже код, отвечающий за анимации
@@ -94,13 +107,15 @@ public abstract class AI : MonoBehaviour
 
         float tempDist = agent.stoppingDistance + deltaAttack;
 
-        
+
+ //       print(transform.name + " раз  " + tempDist + " и расстояние " + curDist);
 
         ranged = curDist <= tempDist;
+
+
         if (ranged)
         {
-            print(curAngle);
-            transform.LookAt(player.transform);
+            transform.LookAt(transform.position + dd);
             anime.SetTrigger("Attack");
         }
 

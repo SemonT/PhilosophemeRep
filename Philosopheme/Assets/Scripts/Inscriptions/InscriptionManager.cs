@@ -75,10 +75,16 @@ public class InscriptionManager : MonoBehaviour
 
     Transform camTransform;
 
+    public static InscriptionManager instance;
+
     private void Awake()
     {
+        instance = this;
+    }
+    public void Init()
+    {
         cam = GameManager.instance.cam;
-        maxVisibleDistance = maxDistance;
+        maxVisibleDistance =  maxDistance;
         camTransform = cam.gameObject.transform;
 
         Inscription.Init(markPrefab, cam, inscriptionsSpace, maxDistance, revealTime, padding, OnQuestionReply);
