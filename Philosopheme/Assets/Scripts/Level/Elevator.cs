@@ -16,10 +16,14 @@ public class Elevator : MonoBehaviour
     int targetFloor;
     bool isWaiting;
 
+    bool isOutside = true; // Каааастыль
+
+
+
     // Start is called before the first frame update
     void Start()
     {
-        currentFloor = 0;
+        currentFloor = 1;
         isWaiting = false;
         box.localPosition = floors[currentFloor].localPosition;
     }
@@ -38,7 +42,7 @@ public class Elevator : MonoBehaviour
     {
         if (isWaiting)
         {
-            Player.instance.transform.parent = box.transform;
+            if (!isOutside) Player.instance.transform.parent = box.transform; // кассстыль
             isWaiting = false;
             Vector3 targetPos = floors[targetFloor].localPosition;
             GameManager.instance.TranslatePositionObject(box.transform, targetPos, (box.localPosition - targetPos).magnitude / speed, GameManager.PositionTranslationObject.maxSpeedDefault, error, 0, OnFloorReachCall);
@@ -50,5 +54,13 @@ public class Elevator : MonoBehaviour
         Player.instance.transform.parent = null;
         currentFloor = targetFloor;
         onFloorReach?.Invoke();
+
+        isOutside = false; // Каааааастыль
+    }
+
+    public void Call(int floor)
+    {
+        targetFloor = floor;
+        Prepare();
     }
 }

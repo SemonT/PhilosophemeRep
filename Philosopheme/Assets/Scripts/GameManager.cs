@@ -184,8 +184,6 @@ public class GameManager : MonoBehaviour
         if (!instance) instance = this;
         camDefaultFieldOfView = cam.fieldOfView;
         MaterialModel.Initialise();
-
-        InscriptionManager.instance.Init();
     }
     // Start is called before the first frame update
     void Start()

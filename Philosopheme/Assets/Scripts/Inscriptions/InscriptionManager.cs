@@ -75,13 +75,7 @@ public class InscriptionManager : MonoBehaviour
 
     Transform camTransform;
 
-    public static InscriptionManager instance;
-
-    private void Awake()
-    {
-        instance = this;
-    }
-    public void Init()
+    public void Awake()
     {
         cam = GameManager.instance.cam;
         maxVisibleDistance =  maxDistance;
