@@ -96,9 +96,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd3fcc927400b644b71c5eec1193537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: {x: 0, y: 0, z: 0}
   animator: {fileID: 0}
   clips: []
-  damage: -50
   armTransform: {fileID: 1580970700117343942}
 --- !u!54 &1580970699391223718
 Rigidbody:
@@ -216,12 +216,12 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1580970700931463782}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 6d961c1cce44f1d48971ca6494d3e446, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 0.9015723}
+  m_Center: {x: 0, y: 3.8157436e-11, z: -0.0034671274}
 --- !u!1 &1580970700989004393
 GameObject:
   m_ObjectHideFlags: 0

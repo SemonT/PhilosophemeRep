@@ -65,8 +65,8 @@ public class Health : MonoBehaviour
 
 
         GameManager.instance.creatures.Remove(transform.gameObject);
-         GetComponent<Inscription>()?.Reply();
-    //    Destroy(transform.gameObject, deathTime);
+        GetComponent<Inscription>()?.Reply();
+        Destroy(transform.gameObject, deathTime);
     }
 
     // float amount в Update() будет тратиться за секунду

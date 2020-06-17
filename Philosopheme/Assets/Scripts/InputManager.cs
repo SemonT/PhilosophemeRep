@@ -24,16 +24,17 @@ public class InputManager : MonoBehaviour
         interaction = GetComponent<Interaction>();
     }
 
-    // Update is called once per frame
+    // Управление ГГ переезжает в FixedUpdate()
     void Update()
     {
     //    bool dodge = false;
-
+    /*
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
 
         float mouseX = Input.GetAxisRaw("Mouse X");
         float mouseY = Input.GetAxisRaw("Mouse Y");
+        */
 
         interaction.UpdateWP(Input.GetKeyDown(KeyCode.F));
         npc.npcUpdateContainer?.Invoke(Input.GetKey(KeyCode.Q), Input.GetKey(KeyCode.E));
@@ -47,6 +48,23 @@ public class InputManager : MonoBehaviour
 
         move.Dodge(x, y, dodge);
         */
+        
+        if (move != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
+        }
+        
+    }
+
+    private void FixedUpdate()
+    {
+        float x = Input.GetAxis("Horizontal");
+        float y = Input.GetAxis("Vertical");
+
+        float mouseX = Input.GetAxisRaw("Mouse X");
+        float mouseY = Input.GetAxisRaw("Mouse Y");
+
+
         if (move != null)
         {
             if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKey(KeyCode.W))
@@ -54,8 +72,7 @@ public class InputManager : MonoBehaviour
             if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && y > 0) move.Sprint(moveLock);
             if (x != 0 || y != 0) move.MoveOnGround(x, y, moveLock);
             if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY, cameraLock);
-            if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
+       //     if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
         }
-
     }
 }

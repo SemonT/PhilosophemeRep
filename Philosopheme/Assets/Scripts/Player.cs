@@ -6,8 +6,8 @@ public class Player : MonoBehaviour
 {
     public static Player instance;
 
-    public Vector3 speed;
-    private Vector3 prevPos;
+    //public Vector3 speed;
+    //private Vector3 prevPos;
 
     public Animator animator;
     public AnimationClip[] clips;
@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         if (animator) clips = animator.runtimeAnimatorController.animationClips;
 
-        prevPos = transform.position;
+     //   prevPos = transform.position;
     }
 
     // Update is called once per frame
@@ -37,11 +37,13 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        /*
         Vector3 curPos = transform.position;
         speed = (prevPos - curPos) / Time.fixedTime;
 
     //    print("Скорость " + speed.magnitude);
         prevPos = curPos;
+        */
     }
 
     /*

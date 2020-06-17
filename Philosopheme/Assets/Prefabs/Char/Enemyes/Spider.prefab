@@ -291,7 +291,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3414505041440864041}
   m_LocalRotation: {x: 0.6532815, y: 0.27059802, z: 0.27059802, w: 0.6532815}
-  m_LocalPosition: {x: 0, y: 1.3540001, z: 0.37800026}
+  m_LocalPosition: {x: -0.11, y: 1.46, z: 0.656}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3414505042136409632}
@@ -591,7 +591,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3414505042045979763}
-  - component: {fileID: 7720115208620295913}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -617,19 +616,6 @@ Transform:
   m_Father: {fileID: 3414505042136409632}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &7720115208620295913
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3414505042045979762}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.554064, y: 1.4649699, z: 1.1360893}
-  m_Center: {x: 0.011849165, y: 0.93959355, z: -0.21890831}
 --- !u!1 &3414505042069879162
 GameObject:
   m_ObjectHideFlags: 0
@@ -707,6 +693,7 @@ GameObject:
   - component: {fileID: 3414505042136409636}
   - component: {fileID: 3414505042136409635}
   - component: {fileID: 3414505042136409634}
+  - component: {fileID: 3903949811738248031}
   m_Layer: 0
   m_Name: Spider
   m_TagString: Untagged
@@ -813,7 +800,7 @@ MonoBehaviour:
   stamnaDrainCoff: 1.25
   armour: 0
   armorCoff: 0.25
-  deathTime: 20
+  deathTime: 5
 --- !u!54 &3414505042136409634
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -826,10 +813,23 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &3903949811738248031
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3414505042136409647}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.6628741, y: 1.2290463, z: 0.917181}
+  m_Center: {x: -0.002986014, y: 1.6304817, z: -0.041409492}
 --- !u!1 &3414505042141198522
 GameObject:
   m_ObjectHideFlags: 0

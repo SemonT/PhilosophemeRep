@@ -10,10 +10,11 @@ public class Movement : MonoBehaviour
     public float strafeCoff = 0.4f;
     public float vertLimit = 65f;
     public float sprintBoost = 2f;
+    public const float EPSILON = 0.01f;
 
     private float pitch;
 
-    // В настройках проекта есть настрока чувствительности мыши, что нужно будет перетащить в настройки игры и эту переменную использовать оттудова
+    // В настройках проекта есть настройка чувствительности мыши, что нужно будет перетащить в настройки игры и эту переменную использовать оттудова
     public float mouseSense = 1.5f;
     public float jumpForce = 100f;
     public float dodgeForce = 500f;
@@ -27,11 +28,17 @@ public class Movement : MonoBehaviour
     private Rigidbody playerRB;
     private Health health;
 
-    // Надо переписать через RigidBody, иначе проходит сквозь объекты
+    private float speedForce = 0f;
+
     public void MoveOnGround(float x, float y, bool moveLock)
     {
-        if (!moveLock) 
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + strafeCoff * transform.right * x + transform.forward * y, speed * Time.deltaTime);
+        // Некорректно на случай, если ГГ что-то сильно пнёт и нужно будет замедлиться
+        if (!moveLock && playerRB.velocity.magnitude < speed)
+        {
+            // F = m * a = m * v / t
+            speedForce = (playerRB.mass * (speed - playerRB.velocity.magnitude)) / Time.fixedDeltaTime;
+            playerRB.AddForce((transform.forward * y + transform.right * strafeCoff * x) * speedForce);
+        }
     }
 
     public void Turn(float mouseX, float mouseY, bool cameraLock)
@@ -76,12 +83,13 @@ public class Movement : MonoBehaviour
         }
     }
 
-    // Надо переписать через RigidBody, ибо проходит сквозь объекты
     public void Sprint(bool moveLock)
     {
-        if (!moveLock && health.curStamina > 0)
+        if (!moveLock && health.curStamina > 0 && playerRB.velocity.magnitude <= (sprintBoost * speed))
         {
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, sprintBoost * speed * Time.deltaTime);
+            speedForce = (playerRB.mass * (speed * sprintBoost - playerRB.velocity.magnitude)) / Time.fixedDeltaTime;
+            playerRB.AddForce(transform.forward * speedForce);
+
             health.StaminaDrain(health.staminaDrain, true);
         }
     }
@@ -93,15 +101,16 @@ public class Movement : MonoBehaviour
         playerRB = transform.GetComponent<Rigidbody>();
         health = transform.GetComponent<Health>();
 
-        jumpOrigin = (transform.GetChild(1).localScale.y / 2) - 0.1f; 
+        //Метод нужно унифицировать.. когда-нибудь
+        jumpOrigin = (transform.GetChild(1).localScale.y / 2) - EPSILON - transform.GetChild(1).localPosition.y;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*
-        Vector3 origin = transform.localPosition - jumpOrigin * transform.up;
-        Debug.DrawLine(origin, origin - 0.15f * transform.up, Color.red);
-        */
+        Vector3 origin2 = transform.localPosition - jumpOrigin * transform.up;
+        Debug.DrawRay(origin2, -transform.up, Color.red);
     }
 }
+//   transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, sprintBoost * speed * Time.deltaTime);
