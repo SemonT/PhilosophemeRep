@@ -53,16 +53,15 @@ public class InputManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
         }
-        
+        float mouseX = Input.GetAxisRaw("Mouse X");
+        float mouseY = Input.GetAxisRaw("Mouse Y");
+        if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY, cameraLock);
     }
 
     private void FixedUpdate()
     {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
-
-        float mouseX = Input.GetAxisRaw("Mouse X");
-        float mouseY = Input.GetAxisRaw("Mouse Y");
 
 
         if (move != null)
@@ -71,7 +70,6 @@ public class InputManager : MonoBehaviour
                 move.Sprint(moveLock);
             if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && y > 0) move.Sprint(moveLock);
             if (x != 0 || y != 0) move.MoveOnGround(x, y, moveLock);
-            if (mouseX != 0 || mouseY != 0) move.Turn(mouseX, mouseY, cameraLock);
        //     if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
         }
     }

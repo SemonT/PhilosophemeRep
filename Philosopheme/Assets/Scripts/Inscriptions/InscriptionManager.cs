@@ -32,9 +32,45 @@ public class InscriptionManager : MonoBehaviour
     public static Inscription lastInscription { get; set; }
     static Philosopheme[] philosophemes;
 
+    public static bool VisibilityFilter(GameObject go)
+    {
+        if (GameManager.DefaultVisibilityFilter(go)) return true;
+
+        Transform parent = go.GetComponentInParent<Inscription>()?.gameObject.transform;
+        if (parent)
+        {
+            Transform[] childTransforms = parent.GetComponentsInChildren<Transform>();
+            if (childTransforms.Length > 0)
+            {
+                foreach (Transform t in childTransforms)
+                {
+                    if (t == go.transform)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
     public static bool CheckForVisibility(GameObject go)
     {
-        return GameManager.CheckForLinearVisibility(cam.gameObject, go, maxVisibleDistance, ~0, QueryTriggerInteraction.Ignore, GameManager.DefaultVisibilityFilter);
+        if (GameManager.CheckForLinearVisibility(cam.gameObject, go, maxVisibleDistance, ~0, QueryTriggerInteraction.Ignore, VisibilityFilter))
+        {
+            return true;
+        }
+        bool isVisible = false;
+        Transform[] transforms = go.GetComponentsInChildren<Transform>();
+        if (transforms.Length > 0)
+        {
+            foreach (Transform t in transforms)
+            {
+                if (GameManager.CheckForLinearVisibility(cam.gameObject, t.gameObject, maxVisibleDistance, ~0, QueryTriggerInteraction.Ignore, VisibilityFilter))
+                {
+                    isVisible = true;
+                    break;
+                }
+            }
+        }
+        return isVisible;
     }
     public static void SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
     {
@@ -103,6 +139,12 @@ public class InscriptionManager : MonoBehaviour
                 RaycastHit hit = hits[i];
                 GameObject go = hit.collider.gameObject;
                 Inscription inscr = go.GetComponent<Inscription>();
+                if (!inscr)
+                {
+                    Inscription[] inscrs = go.GetComponentsInParent<Inscription>();
+                    if (inscrs.Length > 0)
+                        inscr = inscrs[0];
+                }
                 if (inscr && CheckForVisibility(go))
                 {
                     if (lastInscription)

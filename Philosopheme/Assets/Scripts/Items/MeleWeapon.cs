@@ -64,7 +64,15 @@ public class MeleWeapon : Item
                                     o.transform.SetParent(obj.transform, true);
                                     o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
                                 }
-                                obj.GetComponent<Health>()?.HealthChange(-damage);
+                                Health health = obj.GetComponent<Health>();
+                                if (!health)
+                                {
+                                    Health[] healths = obj.GetComponentsInParent<Health>();
+                                    if (healths.Length > 0)
+                                        health = healths[0];
+                                }
+                                if (health)
+                                    health.HealthChange(-damage);
                             }
                         }
                     }

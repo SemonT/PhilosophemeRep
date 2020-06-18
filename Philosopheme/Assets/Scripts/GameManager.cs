@@ -111,9 +111,15 @@ public class GameManager : MonoBehaviour
         float distance = dir.magnitude;
         if (distance > maxDistance) return false;
 
+        if (go2.name == "Eye1")
+        {
+            print("Eye1");
+        }
+
         bool isVisible = true;
         RaycastHit[] hits = Physics.RaycastAll(pos1, dir, distance, layerMask, q);
-        if (hits.Length == 0) return false;
+        Debug.DrawRay(pos1, dir.normalized * distance, Color.red, Time.deltaTime);
+        if (hits.Length == 0) return true;
 
         for (int i = 0; i < hits.Length; i++)
         {
@@ -161,6 +167,21 @@ public class GameManager : MonoBehaviour
             max = Vector2.Max(max, v);
         }
         return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
+    }
+    public static Rect WorldBoundsToUIRectOverall(Camera cam, RectTransform rectTransform, Bounds[] boundsArray)
+    {
+        Rect[] rects = new Rect[boundsArray.Length];
+        for (int i = 0; i < rects.Length; i++)
+        {
+            rects[i] = WorldBoundsToUIRect(cam, rectTransform, boundsArray[i]);
+        }
+        Rect overallRect = rects[0];
+        foreach (Rect r in rects)
+        {
+            overallRect.min = Vector2.Min(overallRect.min, r.min);
+            overallRect.max = Vector2.Max(overallRect.max, r.max);
+        }
+        return overallRect;
     }
 
     public Camera cam;

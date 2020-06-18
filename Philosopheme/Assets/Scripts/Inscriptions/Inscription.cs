@@ -34,6 +34,7 @@ public class Inscription : MonoBehaviour
     public bool isReply;
     public string text;
     public Color color = Color.white;
+    public Transform inscriptionPoint;
 
     new Renderer renderer;
     new Collider collider;
@@ -106,7 +107,6 @@ public class Inscription : MonoBehaviour
         if (IsActive)
         {
             Vector2 viewportPos = cam.WorldToViewportPoint(transform.position);
-            
             if (!(
                 viewportPos.x > 0 && viewportPos.x < 1 &&
                 viewportPos.y > 0 && viewportPos.y < 1 &&
@@ -133,16 +133,35 @@ public class Inscription : MonoBehaviour
                 markRectTransform.localScale = Vector2.one * sizeMultiplier;
             }
 
-            Bounds objBounds;
-            if (renderer) objBounds = renderer.bounds;
-            else if (collider) objBounds = collider.bounds;
-            else if (mesh) objBounds = mesh.bounds;
-            else objBounds = new Bounds(transform.position, Vector3.one);
+            Collider[] colliders = GetComponentsInChildren<Collider>();
+            Bounds[] boundsArray;
+            if (colliders.Length > 0)
+            {
+                boundsArray = new Bounds[colliders.Length];
+                for (int i = 0; i < boundsArray.Length; i++)
+                {
+                    boundsArray[i] = colliders[i].bounds;
+                }
+            }
+            else if (renderer) boundsArray = new Bounds[1] { renderer.bounds };
+            else if (collider) boundsArray = new Bounds[1] { collider.bounds };
+            else if (mesh) boundsArray = new Bounds[1] { mesh.bounds };
+            else boundsArray = new Bounds[1] { new Bounds(transform.position, Vector3.one) };
 
-            Rect targetRect = GameManager.WorldBoundsToUIRect(cam, spaceRectTransform, objBounds);
+            Rect targetRect = GameManager.WorldBoundsToUIRectOverall(cam, spaceRectTransform, boundsArray);
+            //Rect targetRect = GameManager.WorldBoundsToUIRect(cam, spaceRectTransform, objBounds);
             Rect spaceRect = spaceRectTransform.rect;
             Vector2 targetRectPos = new Vector2(targetRect.x + targetRect.width / 2, targetRect.y + targetRect.height / 2);
-            Vector2 targetPos = GameManager.WorldPositionToUIPos(cam, spaceRectTransform, transform.position);
+            //Vector2 targetPos = GameManager.WorldPositionToUIPos(cam, spaceRectTransform, transform.position);
+            Vector2 targetPos;
+            if (inscriptionPoint)
+            {
+                targetPos = GameManager.WorldPositionToUIPos(cam, spaceRectTransform, inscriptionPoint.position);
+            }
+            else
+            {
+                targetPos = targetRectPos;
+            }
 
             Rect topRect = new Rect(spaceRect.x, targetRect.y + targetRect.height, spaceRect.width, spaceRect.y + spaceRect.height - targetRect.y - targetRect.height);
             //Rect rightRect = new Rect(targetRect.x + targetRect.width, spaceRect.y, spaceRect.x + spaceRect.width - targetRect.x - targetRect.width, spaceRect.height);
@@ -236,7 +255,21 @@ public class Inscription : MonoBehaviour
     }
     public bool Show()
     {
-        if (!InscriptionManager.CheckForVisibility(gameObject)) return false;
+        bool isVisible = InscriptionManager.CheckForVisibility(gameObject);
+        if (!isVisible)
+        {
+            Transform[] transforms = GetComponentsInChildren<Transform>();
+            if (transforms.Length <= 0) return false;
+            foreach (Transform t in transforms)
+            {
+                if (InscriptionManager.CheckForVisibility(t.gameObject))
+                {
+                    isVisible = true;
+                    break;
+                }
+            }
+            if (!isVisible) return false;
+        }
         IsActive = true;
         growDeltaMultiplier = 1;
         return true;

@@ -178,6 +178,11 @@ public class Inventory : MonoBehaviour
         //currentItem.gameObject.transform.localRotation *= currentItem.handleBasis.localRotation;
         currentItem.GetComponent<Rigidbody>().isKinematic = true;
         currentItem.GetComponent<Collider>().enabled = false;
+        Inscription insr = currentItem.GetComponent<Inscription>();
+        if (insr && insr.IsActive)
+        {
+            insr.Hide();
+        }
     }
     public Item PullItem(ItemFilterCheck f)
     {

@@ -80,7 +80,14 @@ public class RangedWeapon : Item
                             k = k0 + delta * materialModel.density * 60f / currentBullet.penetration;
                             //print(k + " of " + h);
                             if (k > h) k = h;
+
                             Health health = hit1.collider.gameObject.GetComponent<Health>();
+                            if (!health)
+                            {
+                                Health[] healths = hit1.collider.gameObject.GetComponentsInParent<Health>();
+                                if (healths.Length > 0)
+                                    health = healths[0];
+                            }
                             if (health)
                             {
                                 float x1 = Mathf.Pow(k0, 1 / n);
