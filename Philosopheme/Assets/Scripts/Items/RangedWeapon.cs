@@ -28,10 +28,99 @@ public class RangedWeapon : Item
             fireEffect = bulletBasis.GetComponent<ParticleSystem>();
             currentBullet = null;
         }
+
+        enum HitType
+        {
+            bulletHit = 1,
+            bulletHole,
+            bulletRicochet,
+            clubHit
+        }
+        struct HitEffectInfo
+        {
+            public Vector3 prevPos;
+            public RaycastHit hit;
+            public MaterialModel mm;
+            public HitType ht;
+            public Quaternion rotation;
+            public HitEffectInfo(Vector3 prevPos, RaycastHit hit, Quaternion rotation, MaterialModel mm, HitType ht)
+            {
+                this.prevPos = prevPos;
+                this.hit = hit;
+                this.rotation = rotation;
+                this.mm = mm;
+                this.ht = ht;
+            }
+        }
+        List<HitEffectInfo> postEffects = new List<HitEffectInfo>();
+        void PostEffect()
+        {
+            while (postEffects.Count > 0)
+            {
+                HitEffectInfo hei = postEffects[0];
+
+                Vector3 colliderVelocity = hei.hit.collider.transform.position - hei.prevPos;
+                GameObject[] effects;
+                switch (hei.ht)
+                {
+                    case HitType.bulletHit:
+                        effects = hei.mm.pack.bulletHits;
+                        break;
+                    case HitType.bulletHole:
+                        effects = hei.mm.pack.bulletHoles;
+                        GameObject[] hitEffects = hei.mm.pack.bulletEffects;
+                        if (hitEffects.Length > 0)
+                        {
+                            GameObject o = Instantiate(
+                                hitEffects[Random.Range(0, hitEffects.Length)],
+                                hei.hit.point + hei.hit.normal * 0.005f + colliderVelocity * 2,
+                                Quaternion.LookRotation(-hei.hit.normal)
+                            );
+                            o.transform.SetParent(hei.hit.collider.gameObject.transform, true);
+                            o.GetComponent<ParticleSystem>().Play();
+                        }
+                        break;
+                    case HitType.bulletRicochet:
+                        effects = hei.mm.pack.bulletRicochets;
+                        break;
+                    case HitType.clubHit:
+                        effects = hei.mm.pack.clubHits;
+                        break;
+                    default:
+                        effects = new GameObject[0];
+                        break;
+                }
+                if (effects.Length > 0)
+                {
+                    GameObject o = Instantiate(
+                        effects[Random.Range(0, effects.Length)],
+                        hei.hit.point + hei.hit.normal * 0.005f + colliderVelocity * 2,
+                        Quaternion.LookRotation(-hei.hit.normal)
+                    );
+                    o.transform.SetParent(hei.hit.collider.gameObject.transform, true);
+                    if (hei.rotation == Quaternion.identity)
+                    {
+                        o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                    }
+                    else
+                    {
+                        MeshRenderer m = o.transform.GetComponentInChildren<MeshRenderer>();
+                        if (m) m.gameObject.transform.rotation = hei.rotation;
+                    }
+
+                }
+
+
+                postEffects.RemoveAt(0);
+            }
+        }
         void SimulateStep(Vector3 start, Vector3 dir, float k0)
         {
             RaycastHit hit1;
             Physics.Raycast(start, dir, out hit1, 10000f, ~0, QueryTriggerInteraction.Ignore);
+            Debug.DrawLine(start, hit1.point, Color.blue, 100000f);
+            GameManager.instance.InvokeNextFrame(PostEffect);
+            
             if (hit1.collider)
             {
                 MaterialModel materialModel = hit1.collider.gameObject.GetComponent<MaterialModel>();
@@ -47,16 +136,7 @@ public class RangedWeapon : Item
                     float ricochetRatio = (angle / newAngle) / refractionMultiplier;
                     if (ricochetRatio < ricochetMinimalRatio)
                     {
-                        if (materialModel.pack.bulletHoles.Length > 0)
-                        {
-                            GameObject o = Instantiate(
-                                materialModel.pack.bulletHoles[Random.Range(0, materialModel.pack.bulletHoles.Length)],
-                                hit1.point + hit1.normal * 0.005f,
-                                Quaternion.LookRotation(-hit1.normal)
-                            );
-                            o.transform.SetParent(hit1.collider.gameObject.transform, true);
-                            o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
-                        }
+                        postEffects.Add(new HitEffectInfo(hit1.collider.transform.position, hit1, Quaternion.identity, materialModel, HitType.bulletHole));
                         Vector3 normalComponent = -hit1.normal.normalized * Mathf.Cos(newAngle);
                         Vector3 tangentComponent = Vector3.Cross(hit1.normal, Vector3.Cross(hit1.normal, -dir)).normalized * Mathf.Sin(newAngle);
                         //Debug.DrawLine(hit1.point, hit1.point + normalComponent, Color.blue, 100000f);
@@ -101,16 +181,7 @@ public class RangedWeapon : Item
                             Debug.DrawLine(hit1.point, hit2.point, Color.red, 100000f);
                             if (k < h)
                             {
-                                if (materialModel.pack.bulletHoles.Length > 0)
-                                {
-                                    GameObject o = Instantiate(
-                                        materialModel.pack.bulletHoles[Random.Range(0, materialModel.pack.bulletHoles.Length)],
-                                        hit2.point + hit2.normal * 0.005f,
-                                        Quaternion.LookRotation(-hit2.normal)
-                                    );
-                                    o.transform.SetParent(hit2.collider.gameObject.transform, true);
-                                    o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
-                                }
+                                postEffects.Add(new HitEffectInfo(hit2.collider.transform.position, hit2, Quaternion.identity, materialModel, HitType.bulletHole));
 
                                 angle = Vector3.Angle(dir, hit2.normal) * Mathf.PI / 180;
                                 newAngle = Mathf.Asin(Mathf.Sin(angle) * refractionMultiplier);
@@ -127,17 +198,7 @@ public class RangedWeapon : Item
                     {
                         Vector3 normalComponent = hit1.normal.normalized * Mathf.Cos(angle);
                         Vector3 tangentComponent = Vector3.Cross(hit1.normal, Vector3.Cross(hit1.normal, -dir)).normalized * Mathf.Sin(angle);
-                        if (materialModel.pack.bulletRicochets.Length > 0)
-                        {
-                            GameObject o = Instantiate(
-                                materialModel.pack.bulletRicochets[Random.Range(0, materialModel.pack.bulletRicochets.Length)],
-                                hit1.point + hit1.normal * 0.005f,
-                                Quaternion.LookRotation(-hit1.normal)
-                            );
-                            o.transform.SetParent(hit1.collider.gameObject.transform, true);
-                            MeshRenderer m = o.transform.GetComponentInChildren<MeshRenderer>();
-                            if (m) m.gameObject.transform.rotation = Quaternion.LookRotation(-normalComponent, Vector3.Cross(tangentComponent, normalComponent));
-                        }
+                        postEffects.Add(new HitEffectInfo(hit1.collider.transform.position, hit1, Quaternion.LookRotation(-normalComponent, Vector3.Cross(tangentComponent, normalComponent)), materialModel, HitType.bulletRicochet));
                         //Debug.DrawLine(hit1.point, hit1.point + normalComponent, Color.blue, 100000f);
                         //Debug.DrawLine(hit1.point, hit1.point + tangentComponent, Color.green, 100000f);
                         dir = normalComponent + tangentComponent;
@@ -147,16 +208,7 @@ public class RangedWeapon : Item
                 }
                 else
                 {
-                    if (materialModel.pack.bulletHits.Length > 0)
-                    {
-                        GameObject o = Instantiate(
-                            materialModel.pack.bulletHits[Random.Range(0, materialModel.pack.bulletHits.Length)],
-                            hit1.point + hit1.normal * 0.005f,
-                            Quaternion.LookRotation(-hit1.normal)
-                        );
-                        o.transform.SetParent(hit1.collider.gameObject.transform, true);
-                        o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
-                    }
+                    postEffects.Add(new HitEffectInfo(hit1.collider.transform.position, hit1, Quaternion.identity, materialModel, HitType.bulletHit));
                 }
             }
             else

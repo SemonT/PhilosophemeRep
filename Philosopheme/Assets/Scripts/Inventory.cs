@@ -232,7 +232,7 @@ public class Inventory : MonoBehaviour
             currentItem = null;
         }
     }
-
+    
     void OnDestroy()
     {
         if (instance == this) instance = null;

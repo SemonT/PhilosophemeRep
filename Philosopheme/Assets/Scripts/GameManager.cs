@@ -88,14 +88,34 @@ public class GameManager : MonoBehaviour
         public GameObject[] bulletHits;
         public GameObject[] bulletHoles;
         public GameObject[] bulletRicochets;
-        public GameObject[] bulletHitEffects;
+        public GameObject[] bulletEffects;
         public GameObject[] clubHits;
+        public GameObject[] clubEffects;
     }
     public delegate bool VisibilityFilter(GameObject go);
 
     public List<GameObject> creatures = new List<GameObject>();
 
     public static GameManager instance;
+
+
+    public delegate void Function();
+    public void InvokeNextFrame(Function function)
+    {
+        try
+        {
+            StartCoroutine(_InvokeNextFrame(function));
+        }
+        catch
+        {
+            Debug.Log("Trying to invoke " + function.ToString() + " but it doesnt seem to exist");
+        }
+    }
+    private IEnumerator _InvokeNextFrame(Function function)
+    {
+        yield return null;
+        function();
+    }
 
     public static bool DefaultVisibilityFilter(GameObject go)
     {
@@ -118,7 +138,7 @@ public class GameManager : MonoBehaviour
 
         bool isVisible = true;
         RaycastHit[] hits = Physics.RaycastAll(pos1, dir, distance, layerMask, q);
-        Debug.DrawRay(pos1, dir.normalized * distance, Color.red, Time.deltaTime);
+        //Debug.DrawRay(pos1, dir.normalized * distance, Color.red, Time.deltaTime);
         if (hits.Length == 0) return true;
 
         for (int i = 0; i < hits.Length; i++)
