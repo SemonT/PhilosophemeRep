@@ -212,7 +212,7 @@ public class Inventory : MonoBehaviour
     {
         Destroy(o);
     }
-    void ReleaseCurrentItem()
+    public void ReleaseCurrentItem()
     {
         if (currentItem)
         {
