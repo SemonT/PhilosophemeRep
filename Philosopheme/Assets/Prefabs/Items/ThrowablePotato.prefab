@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6374430451170664491}
   - component: {fileID: 6374430451170664502}
   - component: {fileID: 6374430451170664503}
+  - component: {fileID: 2875846460383236437}
   m_Layer: 0
   m_Name: ThrowablePotato
   m_TagString: Untagged
@@ -152,6 +153,23 @@ MonoBehaviour:
       type: 3}
     damage: 50
     force: 250
+--- !u!114 &2875846460383236437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6374430451170664489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7342c08a1aac3f4b83e1388a83414af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isQuestion: 0
+  isReply: 1
+  text: "\u041A\u0430\u0440\u0442\u043E\u0448\u043A\u0430"
+  color: {r: 0.8679245, g: 0.7567045, b: 0.51174796, a: 1}
+  inscriptionPoint: {fileID: 0}
 --- !u!1001 &8924191597443547079
 PrefabInstance:
   m_ObjectHideFlags: 0
