@@ -149,10 +149,10 @@ MonoBehaviour:
     animationLength: 0
     timer: 0
     isActual: 0
-    fireball: {fileID: 6773137071869952011, guid: 2b64cb442e3ad6942ae02d3cf4acaeb0,
-      type: 3}
     damage: 50
-    force: 250
+    force: 7
+    lifeTime: 25
+    lifeAfterCollide: 1.5
 --- !u!114 &3912852323637500545
 MonoBehaviour:
   m_ObjectHideFlags: 0

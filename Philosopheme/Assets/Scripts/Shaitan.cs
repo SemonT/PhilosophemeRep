@@ -24,7 +24,7 @@ public class Shaitan : MonoBehaviour
         playerTransform = Player.instance.transform;
         a = (maxPeriod - minPeriod) / (maxDistance - minDistance);
         b = minPeriod - minDistance * a;
-        print("a: " + a + "\t b: " + b);
+   //     print("a: " + a + "\t b: " + b);
         timer = 0;
         period = 999999999f;
     }
@@ -37,7 +37,7 @@ public class Shaitan : MonoBehaviour
         {
             rb.AddForce(RandomVector3(-forceMultiplier / period, forceMultiplier / period), ForceMode.Impulse);
             timer = 0;
-            print("force (" + period + ")");
+      //      print("force (" + period + ")");
         }
         float distance = Vector3.Distance(transform.position, playerTransform.position);
         if (distance >= maxDistance)
@@ -52,7 +52,7 @@ public class Shaitan : MonoBehaviour
         {
             period = a * distance + b;
         }
-        print("distance: " + distance + "\tperiod:" + period);
+ //       print("distance: " + distance + "\tperiod:" + period);
     }
 
     public Vector3 RandomVector3(float min, float max)

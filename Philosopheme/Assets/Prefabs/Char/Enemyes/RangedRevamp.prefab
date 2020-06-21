@@ -1705,8 +1705,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a03f2bb9b1fa1aa4fbe69f54ba105a65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireball: {fileID: 1322021471981729586, guid: 4e77cb3e69db80b45912346dd90b8e81,
-    type: 3}
+  fireballs:
+  - {fileID: 7647215145949082090, guid: ab965f89e02237348943dbc89d54d289, type: 3}
+  - {fileID: 2056022442512532100, guid: 8ff94d74e117f4e4193c9379740ea9c5, type: 3}
+  - {fileID: 4050187958398892863, guid: 96b0c047de840bd48a11c09688bd75df, type: 3}
+  - {fileID: 6447538964829342450, guid: bd1a2c82a7d89ee43b72ab58a21d008b, type: 3}
+  - {fileID: 5423366244510881842, guid: 7a386baf29d469a409d22ce91c5d8e2b, type: 3}
   firepoint: {fileID: 4463561683431432796}
   accuracy: 35
   force: 90
