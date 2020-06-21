@@ -96,6 +96,8 @@ public abstract class Item : Interactable
 
     void Start()
     {
+        if (gameObject.name == "Throwable")
+            print(this);
         SetActions();
         foreach (Action a in actions)
         {

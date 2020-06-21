@@ -212,7 +212,7 @@ public class Inventory : MonoBehaviour
     {
         Destroy(o);
     }
-    void ReleaseCurrentItem()
+    public void ReleaseCurrentItem()
     {
         if (currentItem)
         {
@@ -232,7 +232,7 @@ public class Inventory : MonoBehaviour
             currentItem = null;
         }
     }
-
+    
     void OnDestroy()
     {
         if (instance == this) instance = null;

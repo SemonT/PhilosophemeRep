@@ -31,15 +31,24 @@ public class MeleWeapon : Item
         {
             ref Transform[] raySources = ref ((MeleWeapon)it).raySources;
 
-            for (int i = 0; i < raySources.Length - 1; i++)
+            for (int i = 0; i < raySources.Length; i++)
             {
                 Vector3 start = raySources[i].position;
                 float speed = (start - raySourcesPrevPoss[i]).magnitude / Time.deltaTime;
                 if (speed > minDamageSpeed)
                 {
-                    for (int j = i + 1; j < raySources.Length; j++)
+                    for (int j = i + 1; j < raySources.Length + 1; j++)
                     {
-                        Vector3 end = raySources[j].position;
+                        Vector3 end;
+                        if (j < raySources.Length)
+                        {
+                            end = raySources[j].position;
+                        }
+                        else
+                        {
+                            end = start;
+                            start = raySourcesPrevPoss[i];
+                        }
                         Vector3 dir = end - start;
 
                         Debug.DrawLine(start, end, Color.red, Time.deltaTime);
@@ -54,16 +63,27 @@ public class MeleWeapon : Item
                                 hittedObjects.Add(obj);
                                 MaterialModel materialModel = obj.GetComponent<MaterialModel>();
                                 if (!materialModel) materialModel = MaterialModel.defaultMaterialModel;
-                                if (materialModel.pack.clubHits.Length > 0)
+                                GameObject[] clubEffects = materialModel.pack.clubEffects;
+                                if (clubEffects.Length > 0)
                                 {
                                     GameObject o = Instantiate(
-                                        materialModel.pack.clubHits[Random.Range(0, materialModel.pack.clubHits.Length)],
-                                        hit.point + hit.normal * 0.005f,
-                                        Quaternion.LookRotation(-hit.normal)
+                                        clubEffects[Random.Range(0, clubEffects.Length)],
+                                        hit.point,
+                                        Quaternion.LookRotation(hit.normal)
                                     );
-                                    o.transform.SetParent(obj.transform, true);
-                                    o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                                    o.transform.SetParent(hit.collider.gameObject.transform, true);
+                                    o.GetComponent<ParticleSystem>().Play();
                                 }
+                                //if (materialModel.pack.clubHits.Length > 0)
+                                //{
+                                //    GameObject o = Instantiate(
+                                //        materialModel.pack.clubHits[Random.Range(0, materialModel.pack.clubHits.Length)],
+                                //        hit.point + hit.normal * 0.005f,
+                                //        Quaternion.LookRotation(-hit.normal)
+                                //    );
+                                //    o.transform.SetParent(obj.transform, true);
+                                //    o.transform.GetComponentInChildren<MeshRenderer>()?.gameObject.transform.Rotate(new Vector3(0f, 0f, Random.Range(0f, 360f)), Space.Self);
+                                //}
                                 Health health = obj.GetComponent<Health>();
                                 if (!health)
                                 {

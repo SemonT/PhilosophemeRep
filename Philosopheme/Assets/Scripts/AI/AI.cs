@@ -23,6 +23,11 @@ public abstract class AI : MonoBehaviour
     // Переменная для милишных ИИ
     protected float deltaAttack = 0f;
 
+    public void Disable()
+    {
+        if (agent) agent.isStopped = true;
+    }
+
     protected bool Filter(GameObject go)
     {
         if (GameManager.DefaultVisibilityFilter(go))
