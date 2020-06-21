@@ -9,12 +9,12 @@ AnimatorOverrideController:
   m_Name: Ranged AI
   m_Controller: {fileID: 9100000, guid: 54fb43e7bb5c8234197e0301a188fe27, type: 2}
   m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: f92d4f6c7c83e1a4d9908483566de9f2, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d228e695a44a2954fae340a3c77df5e2, type: 2}
   - m_OriginalClip: {fileID: -251351218608039746, guid: ba2b0d65e2b5ff94e90b1a53540a7199,
       type: 3}
     m_OverrideClip: {fileID: -251351218608039746, guid: ba2b0d65e2b5ff94e90b1a53540a7199,
       type: 3}
-  - m_OriginalClip: {fileID: 7400000, guid: f92d4f6c7c83e1a4d9908483566de9f2, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: d228e695a44a2954fae340a3c77df5e2, type: 2}
   - m_OriginalClip: {fileID: 5866576275671282845, guid: ba2b0d65e2b5ff94e90b1a53540a7199,
       type: 3}
     m_OverrideClip: {fileID: 5866576275671282845, guid: 7ac45f262ca908b49a3032ce0bb10552,
