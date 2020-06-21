@@ -6,7 +6,7 @@ using UnityEngine;
 // При движении пусть прыгает UPD: сделаю через анимации прыжок
 public class RangedAI : AI
 {
-    public GameObject fireball;
+    public GameObject[] fireballs;
     public Transform firepoint;
     public float accuracy = 35f;
     public float force = 45f;   
@@ -30,7 +30,7 @@ public class RangedAI : AI
         {
             if(fireTimer <= 0)
             {
-                GameObject ball = Instantiate(fireball, firepoint);
+                GameObject ball = Instantiate(fireballs[Random.Range(0, fireballs.Length)], firepoint);
                 firepoint.DetachChildren();
 
                 Player player = Player.instance;
