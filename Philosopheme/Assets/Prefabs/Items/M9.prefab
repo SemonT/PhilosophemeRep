@@ -182,6 +182,7 @@ MonoBehaviour:
   rKeyTimer: 0
   shoot:
     animationName: M9_shoot
+    animation: {fileID: 0}
     it: {fileID: 0}
     animationLength: 0
     timer: 0
@@ -189,6 +190,7 @@ MonoBehaviour:
     bulletBasis: {fileID: 6554070756284460764}
   jerkShutter:
     animationName: M9_jerkShutter
+    animation: {fileID: 0}
     it: {fileID: 0}
     animationLength: 0
     timer: 0
@@ -197,6 +199,7 @@ MonoBehaviour:
     extractorBasis: {fileID: 6554070757082352575}
   reload:
     animationName: M9_reload
+    animation: {fileID: 0}
     it: {fileID: 0}
     animationLength: 0
     timer: 0
@@ -212,6 +215,7 @@ MonoBehaviour:
     - {fileID: 0}
   showAmmo:
     animationName: M9_showAmmo
+    animation: {fileID: 0}
     it: {fileID: 0}
     animationLength: 0
     timer: 0
@@ -234,8 +238,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isQuestion: 0
   isReply: 1
-  text: M9
+  text: "\u043F\u0438\u0441\u0442\u043E\u043B\u0435\u0442\u0430 M9"
   color: {r: 1, g: 1, b: 1, a: 1}
+  inscriptionPoint: {fileID: 0}
 --- !u!1 &6554070755484057669
 GameObject:
   m_ObjectHideFlags: 0

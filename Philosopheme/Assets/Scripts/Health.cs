@@ -55,7 +55,7 @@ public class Health : MonoBehaviour
     private void Death()
     {
         isRegen = false;
-        if(transform.GetComponent<Player>() != null)
+        if(GetComponent<Player>() != null)
         {
             SceneManager.LoadScene("DeathScene");
         }
