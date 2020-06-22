@@ -16,6 +16,8 @@ public class InputManager : MonoBehaviour
 
     private Movement move;
 
+    private float holdFTimer = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,16 +29,28 @@ public class InputManager : MonoBehaviour
     // Управление ГГ переезжает в FixedUpdate()
     void Update()
     {
-    //    bool dodge = false;
-    /*
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        //    bool dodge = false;
+        /*
+            float x = Input.GetAxis("Horizontal");
+            float y = Input.GetAxis("Vertical");
 
-        float mouseX = Input.GetAxisRaw("Mouse X");
-        float mouseY = Input.GetAxisRaw("Mouse Y");
+            float mouseX = Input.GetAxisRaw("Mouse X");
+            float mouseY = Input.GetAxisRaw("Mouse Y");
         */
+        if (Input.GetKey(KeyCode.F))
+        {
+            holdFTimer += Time.deltaTime;
+        }
+        else
+        {
+            holdFTimer = 0;
+        }
+        interaction.UpdateWP(Input.GetKeyDown(KeyCode.F) || holdFTimer > Interaction.instance.holdFTime);
 
-        interaction.UpdateWP(Input.GetKeyDown(KeyCode.F));
+
+
+
+
         npc.npcUpdateContainer?.Invoke(Input.GetKey(KeyCode.Q), Input.GetKey(KeyCode.E));
 
         /*
