@@ -55,7 +55,7 @@ public class Shaitan : MonoBehaviour
  //       print("distance: " + distance + "\tperiod:" + period);
     }
 
-    public Vector3 RandomVector3(float min, float max)
+    public static Vector3 RandomVector3(float min, float max)
     {
         return new Vector3(Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
     }

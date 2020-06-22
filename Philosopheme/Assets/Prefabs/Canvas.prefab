@@ -335,7 +335,7 @@ MonoBehaviour:
   revealTime: 0.25
   padding: {x: 5, y: 5}
   philosophemesList:
-  - enquiryColor: {r: 1, g: 0.3066038, b: 0.3066038, a: 1}
+  - enquiryColor: {r: 1, g: 0.5424528, b: 0.5424528, a: 1}
     replyColor: {r: 0.6650944, g: 0.95437247, b: 1, a: 1}
     replyPrefix: "\u0421\u043E\u043C\u043D\u0435\u043D\u0438\u0435"
     questions:
@@ -376,13 +376,13 @@ MonoBehaviour:
       reply: "\u0414\u043E\u043B\u0436\u043D\u043E \u0431\u044B\u0442\u044C..."
     - enquiry: "\u0427\u0442\u043E \u0442\u044B \u0438\u0449\u0435\u0448\u044C?"
       reply: "\u041D\u0435 \u0437\u043D\u0430\u044E..."
-  - enquiryColor: {r: 1, g: 0.30588236, b: 0.30588236, a: 1}
-    replyColor: {r: 0.4627451, g: 0.64705884, b: 0.35686275, a: 1}
+  - enquiryColor: {r: 1, g: 0.5411765, b: 0.5411765, a: 1}
+    replyColor: {r: 0.7137255, g: 1, b: 0.5529412, a: 1}
     replyPrefix: "\u0421\u043E\u043C\u043D\u0435\u043D\u0438\u0435"
     questions:
     - enquiry: "\u0421\u043E\u043C\u043D\u0435\u043D\u0438\u0435 \u043E\u0433\u0443\u0440\u0435\u0447\u0438\u043A\u0430"
       reply: "@_@%\u043F\u0430\u0440\u0430\u0434\u043E\u043A\u0441*!?))"
-  - enquiryColor: {r: 1, g: 0.4258346, b: 0, a: 1}
+  - enquiryColor: {r: 1, g: 0.61920094, b: 0.33490568, a: 1}
     replyColor: {r: 0.9459811, g: 0.7311321, b: 1, a: 1}
     replyPrefix: "\u041B\u043E\u0433\u0438\u043A\u0430"
     questions:

@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 830628714205933544}
   m_LocalRotation: {x: 0.14705005, y: 0.32836333, z: 0.45891568, w: 0.81237316}
-  m_LocalPosition: {x: 0.6493286, y: 0.08041397, z: 0.06783554}
+  m_LocalPosition: {x: 0.6493286, y: 0.08041397, z: 0.068}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4264821366599376085}
@@ -128,7 +128,7 @@ MonoBehaviour:
   isQuestion: 0
   isReply: 1
   text: "\u043E\u0433\u0443\u0440\u0435\u0447\u0438\u043A\u0430"
-  color: {r: 0.46274513, g: 0.64705884, b: 0.35686275, a: 1}
+  color: {r: 0.7151515, g: 1, b: 0.5515151, a: 1}
   inscriptionPoint: {fileID: 0}
 --- !u!114 &830628714205933545
 MonoBehaviour:

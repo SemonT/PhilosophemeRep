@@ -24,6 +24,8 @@ public class Throwable : Item
         {
 
         }
+
+
         public override void OnEnd()
         {
             //GameObject ball = Instantiate(fireball, ((Throwable)it).transform.position, ((Throwable)it).transform.rotation);
@@ -32,6 +34,7 @@ public class Throwable : Item
             rb.useGravity = false;
             Vector3 target = GameManager.instance.cam.transform.forward;
             rb.AddForce(target * force, ForceMode.Impulse);
+            rb.angularVelocity = Shaitan.RandomVector3(-3, 3); // Вращение 
             Fireball fb = ((Throwable)it).gameObject.AddComponent<Fireball>();
             fb.damage = damage;
             fb.lifeAfterCollide = lifeAfterCollide;
@@ -59,6 +62,7 @@ public class Throwable : Item
     {
         actions = new Action[] { throwItem };
     }
+
     public override void Use()
     {
         if (mouse0KeyDown && !throwItem.isActual) throwItem.Start();
