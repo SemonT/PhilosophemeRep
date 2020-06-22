@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class MotionSensor : MonoBehaviour
 {
+    public bool disposable = false;
     public UnityEvent onDetect;
     public UnityEvent onLose;
 
@@ -26,6 +27,10 @@ public class MotionSensor : MonoBehaviour
         if (other.GetComponent<Player>())
         {
             onLose?.Invoke();
+            if (disposable)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

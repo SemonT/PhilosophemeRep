@@ -8,6 +8,7 @@ public abstract class npc : Interactable
     public static NPCupdate npcUpdateContainer;
     public static bool isDialogueOpened = false;
 
+    public Transform postamentTransform;
     public Transform portraitTransform;
     public Transform lightTransform;
     public Transform oTransform;
@@ -485,5 +486,10 @@ public abstract class npc : Interactable
                 Active = false;
             }
         }
+    }
+    public void Teleport(Transform destination)
+    {
+        postamentTransform.position = destination.position;
+        postamentTransform.rotation = destination.rotation;
     }
 }

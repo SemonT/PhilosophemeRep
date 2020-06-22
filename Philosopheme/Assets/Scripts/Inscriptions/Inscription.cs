@@ -214,7 +214,7 @@ public class Inscription : MonoBehaviour
         }
         else
         {
-            SetText(text + " " + InscriptionManager.CurrentPhilosopheme.replyPostfix);
+            SetText(InscriptionManager.CurrentPhilosopheme.replyPrefix + " " + text);
         }
     }
     public void Reply()

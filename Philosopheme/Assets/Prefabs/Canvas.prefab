@@ -330,13 +330,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64a4cad2b29e1664b87a0a4e0a30bb39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDistance: 10
+  maxDistance: 15
   revealTime: 0.25
   padding: {x: 5, y: 5}
   philosophemesList:
   - enquiryColor: {r: 1, g: 0.3066038, b: 0.3066038, a: 1}
     replyColor: {r: 0.6650944, g: 0.95437247, b: 1, a: 1}
-    replyPostfix: "\u0441\u043E\u043C\u043D\u0435\u043D\u0438\u044F"
+    replyPrefix: "\u0421\u043E\u043C\u043D\u0435\u043D\u0438\u0435"
     questions:
     - enquiry: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0438 \u043D\u0430 \u0432\u0441\u0451
         \u0432\u043E\u043A\u0440\u0443\u0433, \u0440\u0430\u0437\u0432\u0435 \u043E\u043D\u043E
@@ -351,9 +351,15 @@ MonoBehaviour:
         \u043B\u0438 \u044F \u0432 \u0442\u043E\u043C, \u0447\u0442\u043E \u044F
         \u043C\u043E\u0433\u0443 \u0441\u043E\u043C\u043D\u0435\u0432\u0430\u0442\u044C\u0441\u044F?"
       reply: "*\u041F\u0430\u0440\u0430\u0434\u043E\u043A\u0441*"
+  - enquiryColor: {r: 1, g: 0.30588236, b: 0.30588236, a: 1}
+    replyColor: {r: 0.4627451, g: 0.64705884, b: 0.35686275, a: 1}
+    replyPrefix: "\u0421\u043E\u043C\u043D\u0435\u043D\u0438\u0435"
+    questions:
+    - enquiry: "\u0421\u043E\u043C\u043D\u0435\u043D\u0438\u0435 \u043E\u0433\u0443\u0440\u0435\u0447\u0438\u043A\u0430"
+      reply: "@_@%\u043F\u0430\u0440\u0430\u0434\u043E\u043A\u0441*!?))"
   - enquiryColor: {r: 1, g: 0.4258346, b: 0, a: 1}
     replyColor: {r: 0.9459811, g: 0.7311321, b: 1, a: 1}
-    replyPostfix: "\u043B\u043E\u0433\u0438\u043A\u0438"
+    replyPrefix: "\u041B\u043E\u0433\u0438\u043A\u0430"
     questions:
     - enquiry: "\u0410 \u0441\u043E\u043C\u043D\u0435\u0432\u0430\u044E\u0441\u044C
         \u043B\u0438 \u044F \u0432 \u0442\u043E\u043C, \u0447\u0442\u043E \u044F

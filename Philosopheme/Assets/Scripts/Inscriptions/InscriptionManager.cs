@@ -16,7 +16,7 @@ public class InscriptionManager : MonoBehaviour
     {
         public Color enquiryColor = Color.black;
         public Color replyColor = Color.black;
-        public string replyPostfix;
+        public string replyPrefix;
         public Question[] questions;
     }
     public delegate void OnPhilosophemeUpdate();
