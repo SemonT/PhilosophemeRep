@@ -54,17 +54,13 @@ public class Health : MonoBehaviour
 
     private void Death()
     {
-        Destroy(transform.GetComponent<Movement>());
-        
-
         isRegen = false;
         if(transform.GetComponent<Player>() != null)
         {
             SceneManager.LoadScene("DeathScene");
         }
 
-
-        GameManager.instance.creatures.Remove(transform.gameObject);
+        GameManager.instance.creatures.Remove(gameObject);
         GetComponent<Inscription>()?.Reply();
         Animator animator = GetComponent<Animator>();
         if (animator)

@@ -58,6 +58,10 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
+        bool hotkey1 = Input.GetKeyDown(KeyCode.Alpha1);
+        bool hotkey2 = Input.GetKeyDown(KeyCode.Alpha2);
+        bool hotkey3 = Input.GetKeyDown(KeyCode.Alpha3);
+
         bool openInventoryKey = Input.GetKeyDown(KeyCode.Tab);
         bool releaseCurrentItemKey = Input.GetKeyDown(KeyCode.G);
 
@@ -86,6 +90,42 @@ public class Inventory : MonoBehaviour
         }
         else
         {
+            Item it = null;
+            if (hotkey1)
+            {
+                bool ItemFilter(Item i)
+                {
+                    if (i is MeleWeapon item)
+                        return true;
+                    return false;
+                }
+                it = FindItem(ItemFilter);
+            }
+            else if (hotkey2)
+            {
+                bool ItemFilter(Item i)
+                {
+                    if (i is RangedWeapon item)
+                        return true;
+                    return false;
+                }
+                it = FindItem(ItemFilter);
+            }
+            else if (hotkey3)
+            {
+                bool ItemFilter(Item i)
+                {
+                    if (i is Throwable item)
+                        return true;
+                    return false;
+                }
+                it = FindItem(ItemFilter);
+            }
+            if (it != null)
+            {
+                HideCurrentItem();
+                TakeItem(it);
+            }
             if (openInventoryKey)
             {
                 OpenInventory();
@@ -183,6 +223,15 @@ public class Inventory : MonoBehaviour
         if (insr && insr.IsActive)
         {
             insr.Hide();
+        }
+    }
+    public void HideCurrentItem()
+    {
+        Item item = currentItem;
+        if (item)
+        {
+            ReleaseCurrentItem();
+            PickupItem(item);
         }
     }
     public Item FindItem(ItemFilterCheck f)
