@@ -37,7 +37,7 @@ public class Movement : MonoBehaviour
         {
             // F = m * a = m * v / t
             speedForce = (playerRB.mass * (speed - playerRB.velocity.magnitude)) / Time.fixedDeltaTime;
-            playerRB.AddForce((transform.forward * y + transform.right * strafeCoff * x) * speedForce);
+            playerRB.AddForce((transform.forward * y + transform.right * strafeCoff * x) * speedForce, ForceMode.Acceleration);
         }
     }
 
@@ -85,10 +85,11 @@ public class Movement : MonoBehaviour
 
     public void Sprint(bool moveLock)
     {
-        if (!moveLock && health.curStamina > 0 && playerRB.velocity.magnitude <= (sprintBoost * speed))
+        float curSpeed = playerRB.velocity.magnitude;
+        if (!moveLock && health.curStamina > 0 && curSpeed <= (sprintBoost * speed))
         {
-            speedForce = (playerRB.mass * (speed * sprintBoost - playerRB.velocity.magnitude)) / Time.fixedDeltaTime;
-            playerRB.AddForce(transform.forward * speedForce);
+            speedForce = (playerRB.mass * (speed * sprintBoost - curSpeed)) / Time.fixedDeltaTime;
+            playerRB.AddForce(transform.forward * speedForce, ForceMode.Force);
 
             health.StaminaDrain(health.staminaDrain, true);
         }

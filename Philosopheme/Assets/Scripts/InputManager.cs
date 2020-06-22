@@ -82,7 +82,7 @@ public class InputManager : MonoBehaviour
         {
             if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && Input.GetKey(KeyCode.W))
                 move.Sprint(moveLock);
-            if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && y > 0) move.Sprint(moveLock);
+   //         if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && y > 0) move.Sprint(moveLock);
             if (x != 0 || y != 0) move.MoveOnGround(x, y, moveLock);
        //     if (Input.GetKeyDown(KeyCode.Space)) move.Jump();
         }
