@@ -452,7 +452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isQuestion: 0
   isReply: 1
-  text: "\u0414\u0443\u0431\u0438\u043D\u0430"
+  text: "\u0434\u0443\u0431\u0438\u043D\u044B"
   color: {r: 1, g: 1, b: 1, a: 1}
   inscriptionPoint: {fileID: 0}
 --- !u!1 &1522750228454828100
