@@ -39,7 +39,7 @@ public class Inscription : MonoBehaviour
     public Color color = Color.white;
     public Transform inscriptionPoint;
 
-    new Renderer renderer;
+    Renderer rendererrr;
     new Collider collider;
     Mesh mesh;
 
@@ -59,8 +59,8 @@ public class Inscription : MonoBehaviour
 
     void Start()
     {
-        renderer = GetComponent<Renderer>();
-        if (!renderer)
+        rendererrr = GetComponent<Renderer>();
+        if (!rendererrr)
         {
             collider = GetComponent<Collider>();
             if (!collider)
@@ -68,8 +68,8 @@ public class Inscription : MonoBehaviour
                 mesh = GetComponent<Mesh>();
                 if (!mesh)
                 {
-                    renderer = GetComponentInChildren<Renderer>(false);
-                    if (!renderer)
+                    rendererrr = GetComponentInChildren<Renderer>(false);
+                    if (!rendererrr)
                     {
                         collider = GetComponentInChildren<Collider>(true);
                     }
@@ -146,7 +146,7 @@ public class Inscription : MonoBehaviour
                     boundsArray[i] = colliders[i].bounds;
                 }
             }
-            else if (renderer) boundsArray = new Bounds[1] { renderer.bounds };
+            else if (rendererrr) boundsArray = new Bounds[1] { rendererrr.bounds };
             else if (collider) boundsArray = new Bounds[1] { collider.bounds };
             else if (mesh) boundsArray = new Bounds[1] { mesh.bounds };
             else boundsArray = new Bounds[1] { new Bounds(transform.position, Vector3.one) };
