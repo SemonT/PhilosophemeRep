@@ -56,7 +56,7 @@ MonoBehaviour:
   vertLimit: 65
   sprintBoost: 2
   mouseSense: 2
-  jumpForce: 100
+  jumpForce: 200
   dodgeForce: 500
 --- !u!114 &1580970699391223716
 MonoBehaviour:
@@ -96,7 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd3fcc927400b644b71c5eec1193537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: {x: 0, y: 0, z: 0}
   animator: {fileID: 0}
   clips: []
   armTransform: {fileID: 1580970700117343942}

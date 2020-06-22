@@ -496,7 +496,7 @@ MonoBehaviour:
   rKeyTimer: 0
   caliber: 9x19
   energy: 300
-  penetration: 1
+  penetration: 0.6
 --- !u!54 &8985076281943836500
 Rigidbody:
   m_ObjectHideFlags: 0

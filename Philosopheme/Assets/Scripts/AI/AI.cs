@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public abstract class AI : MonoBehaviour
 {
     public bool isHostile = true;
+    public GameObject glaz;
 
     protected NavMeshAgent agent;
     protected Rigidbody body;
@@ -25,9 +26,12 @@ public abstract class AI : MonoBehaviour
     // Переменная для милишных ИИ
     protected float deltaAttack = 0f;
 
+    public abstract void OnDisable();
+
     public void Disable()
     {
         if (isHostile & agent) agent.isStopped = true;
+        OnDisable();
     }
 
     protected bool Filter(GameObject go)
@@ -56,7 +60,8 @@ public abstract class AI : MonoBehaviour
 
     protected virtual void GetTarget(GameObject other, Vector3 pos, Vector3 dir, float maxDistance, float minDistance, out float currentDistance, out float currentAngle, out Vector3 d)
     {
-        bool isVisible = GameManager.CheckForLinearVisibility(gameObject, player.gameObject, maxDistance, ~0, QueryTriggerInteraction.Ignore, Filter);
+
+        bool isVisible = GameManager.CheckForLinearVisibility(glaz, player.gameObject, maxDistance, ~0, QueryTriggerInteraction.Ignore, Filter);
 
         Debug.DrawRay(pos, dir, Color.red);
 

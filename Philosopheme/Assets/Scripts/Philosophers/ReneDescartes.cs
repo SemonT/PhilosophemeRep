@@ -6,10 +6,12 @@ public class ReneDescartes : npc
 {
     public static ReneDescartes instance { get; private set; }
 
+    public Transform final;
     public GameObject club;
     public GameObject cucumber1;
     public GameObject cucumber2;
     public GameObject[] manyVegetables;
+    public Health cucumberHP;
 
     public bool trigger1 = false;
     public bool trigger2 = false;
@@ -57,7 +59,9 @@ public class ReneDescartes : npc
             Execution(GiveCucumbers);
             BlockC();
 
-            if (trigger2)
+            // print(cucumberHP.curHealth);
+          //  print(trigger2);
+            if (trigger2) //cucumberHP.curHealth <= 0) // trigger2
             {
                 BlockO();
                 string option1 = Option(new string[1] { "Я попытался усомниться в том, что могу сомневаться и... произошло нечто странное... Почему так произошло?" });
@@ -89,14 +93,17 @@ public class ReneDescartes : npc
 
                                 BlockO();
                                 Execution(GiveManyVegetables);
-                                Execution(TeleportToEnd);
                                 BlockC();
 
                                 BlockO();
-                                Text("Будь ПРОДУКТИВНЫМ!!");
+                                Text("Время быть ПРОДУКТИВНЫМ!!");
                                 BlockC();
 
-                                if (trigger3)
+                                //BlockO();
+                                //Execution(TeleportToEnd);
+                                //BlockC();
+
+                                if (trigger3) // trigger3
                                 {
                                     BlockO();
                                     string option3 = Option(new string[1] { "Бог есть!" });
@@ -120,6 +127,11 @@ public class ReneDescartes : npc
         DialogueC();
     }
 
+    public new void Start()
+    {
+        base.Start();
+        cucumberHP = cucumber2.GetComponent<Health>();
+    }
     private void Awake()
     {
         if (!instance) instance = this;
@@ -150,7 +162,8 @@ public class ReneDescartes : npc
     }
     void TeleportToEnd()
     {
-        
+        postamentTransform.position = final.position;
+        postamentTransform.rotation = final.rotation;
     }
     //    string KillCondition()
     //    {
@@ -160,4 +173,20 @@ public class ReneDescartes : npc
     //        }
     //        return "";
     //    }
+
+    public void SetTrigger1()
+    {
+        trigger1 = true;
+    }
+
+    public void SetTrigger2()
+    {
+        trigger2 = true;
+    }
+
+    public void SetTrigger3()
+    {
+        trigger3 = true;
+    }
+
 }

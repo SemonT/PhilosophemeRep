@@ -18,7 +18,7 @@ public class Health : MonoBehaviour
     private float tempStaminaTimer = 0f;
     private float tempHealthTimer = 0f;
 
-    public float curHealth;
+    public float curHealth = 1f;
     public float curStamina;
     public float staminaDrain = 15f; //затрата стамины в секунду 
 

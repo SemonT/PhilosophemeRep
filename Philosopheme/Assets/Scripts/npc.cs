@@ -338,7 +338,7 @@ public abstract class npc : Interactable
     LetterMatrix letterMatrix;
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         letterMatrix = new LetterMatrix(this);
         npcUpdateContainer += UpdateWP;

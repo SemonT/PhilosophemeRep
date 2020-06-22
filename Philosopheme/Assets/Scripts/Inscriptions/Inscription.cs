@@ -7,6 +7,9 @@ using TMPro;
 
 public class Inscription : MonoBehaviour
 {
+    string texT;
+    Color coloR;
+
     public delegate void OnQuestionReply();
     static OnQuestionReply OnQuestionReplyEvent;
 

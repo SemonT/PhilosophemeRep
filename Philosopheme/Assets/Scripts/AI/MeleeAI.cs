@@ -8,6 +8,12 @@ public class MeleeAI : AI
 {
     public GameObject damager;
     private Damager d;
+
+
+    public override void OnDisable()
+    {
+
+    }
     protected override void Start()
     {
         base.Start();

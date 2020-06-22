@@ -282,7 +282,7 @@ Transform:
   m_Children:
   - {fileID: 6258827705400099806}
   m_Father: {fileID: 5845954125431087448}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0.0000020392015, y: 0, z: 0}
 --- !u!1 &1612334791734447973
 GameObject:
@@ -1362,7 +1362,7 @@ Transform:
   m_LocalScale: {x: 0.01, y: 0.009999998, z: 0.01}
   m_Children: []
   m_Father: {fileID: 5845954125431087448}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &194346354945757428
 SkinnedMeshRenderer:
@@ -1881,7 +1881,7 @@ GameObject:
   - component: {fileID: 7456370630155981645}
   - component: {fileID: 7456370630155981642}
   m_Layer: 0
-  m_Name: MeleeRevamp 1
+  m_Name: MeleeRevamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1898,6 +1898,7 @@ Transform:
   m_LocalPosition: {x: -2.2311707, y: -0.001, z: -1.6606445}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 5121659135740409476}
   - {fileID: 7894540679025306326}
   - {fileID: 6414988276783343611}
   - {fileID: 4347394419176298196}
@@ -2000,6 +2001,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9027b93adb5f2ba428db974300b43010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isHostile: 1
+  glaz: {fileID: 8745964901422232806}
   damager: {fileID: 3860991872124376822}
 --- !u!114 &7456370630155981642
 MonoBehaviour:
@@ -2146,7 +2149,7 @@ Transform:
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 5845954125431087448}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &3598245102873840988
 SkinnedMeshRenderer:
@@ -2333,6 +2336,36 @@ Transform:
   m_Father: {fileID: 1930814653069542516}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -6.105055, y: 0.7148108, z: -6.013189}
+--- !u!1 &8745964901422232806
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5121659135740409476}
+  m_Layer: 0
+  m_Name: Glaz
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5121659135740409476
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8745964901422232806}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.153, y: 1.339, z: 0.429}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5845954125431087448}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8806365250508661450
 GameObject:
   m_ObjectHideFlags: 0
@@ -2394,7 +2427,7 @@ Transform:
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 5845954125431087448}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!137 &5710362085020830724
 SkinnedMeshRenderer:

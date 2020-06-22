@@ -23,6 +23,11 @@ public class RangedAI : AI
         //print("Время анимации " + fireTime);
     }
 
+    public override void OnDisable()
+    {
+
+    }
+
     protected override void Update()
     {
         base.Update();
