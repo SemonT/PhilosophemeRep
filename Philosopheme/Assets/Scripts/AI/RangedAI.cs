@@ -9,7 +9,8 @@ public class RangedAI : AI
     public GameObject[] fireballs;
     public Transform firepoint;
     public float accuracy = 35f;
-    public float force = 45f;   
+    public float force = 45f;
+    
 
     protected float fireTime;
     protected float fireTimer;
@@ -26,7 +27,7 @@ public class RangedAI : AI
     {
         base.Update();
 
-        if (ranged)
+        if (ranged & isHostile)
         {
             if(fireTimer <= 0)
             {

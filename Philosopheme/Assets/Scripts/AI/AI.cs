@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public abstract class AI : MonoBehaviour
 {
+    public bool isHostile = true;
+
     protected NavMeshAgent agent;
     protected Rigidbody body;
     protected Animator anime;
@@ -25,7 +27,7 @@ public abstract class AI : MonoBehaviour
 
     public void Disable()
     {
-        if (agent) agent.isStopped = true;
+        if (isHostile & agent) agent.isStopped = true;
     }
 
     protected bool Filter(GameObject go)
@@ -98,7 +100,7 @@ public abstract class AI : MonoBehaviour
             {
                 Vector3 dir = obj.transform.position - pos;
 
-                if (obj.GetComponent<Player>() != null)
+                if (isHostile & obj.GetComponent<Player>() != null)
                 {
                     GetTarget(obj, pos, dir, maxDist, minDist, out curDist, out curAngle, out dd);
                 }
@@ -118,7 +120,7 @@ public abstract class AI : MonoBehaviour
         ranged = curDist <= tempDist;
 
 
-        if (ranged)
+        if (ranged & isHostile)
         {
             transform.LookAt(transform.position + dd);
             anime.SetTrigger("Attack");
