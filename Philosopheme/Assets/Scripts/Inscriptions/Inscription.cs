@@ -10,9 +10,6 @@ public class Inscription : MonoBehaviour
     string texT;
     Color coloR;
 
-    public delegate void OnQuestionReply();
-    static OnQuestionReply OnQuestionReplyEvent;
-
     static GameObject markPrefab;
     static Camera cam;
     static Transform camTransform;
@@ -21,7 +18,7 @@ public class Inscription : MonoBehaviour
     static float revealTime;
     static Vector2 padding;
 
-    public static void Init(GameObject markPrefab, Camera cam, GameObject space, float maxDistance, float revealTime, Vector2 padding, OnQuestionReply f)
+    public static void Init(GameObject markPrefab, Camera cam, GameObject space, float maxDistance, float revealTime, Vector2 padding)
     {
         Inscription.markPrefab = markPrefab;
         Inscription.cam = cam;
@@ -30,7 +27,6 @@ public class Inscription : MonoBehaviour
         Inscription.maxDistance = maxDistance;
         Inscription.revealTime = revealTime;
         Inscription.padding = padding;
-        OnQuestionReplyEvent += f;
     }
 
     public bool isQuestion;
@@ -56,6 +52,7 @@ public class Inscription : MonoBehaviour
     float timer;
     public bool IsActive { get; private set; }
     bool hasBeenReplied;
+    int counter;
 
     void Start()
     {
@@ -89,20 +86,24 @@ public class Inscription : MonoBehaviour
         growDeltaMultiplier = 0;
         timer = 0;
         hasBeenReplied = false;
+        counter = -1;
 
         markRectTransform.SetParent(spaceRectTransform);
         SetHidden();
 
-        if (isQuestion || isReply)
+        if (!isQuestion)
         {
-            InscriptionManager.SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate);
-            OnPhilosophemeUpdate();
-            if (isReply) SetColor(color);
-        }
-        else
-        {
-            SetColor(color);
-            SetText(text);
+            //InscriptionManager.SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate);
+            //OnPhilosophemeUpdate();
+            if (isReply)
+            {
+                SetColor(color);
+            }
+            else
+            {
+                SetColor(color);
+                SetText(text);
+            }
         }
     }
     void LateUpdate()
@@ -208,18 +209,18 @@ public class Inscription : MonoBehaviour
 
         }
     }
-    void OnPhilosophemeUpdate()
-    {
-        if (isQuestion)
-        {
-            SetText(InscriptionManager.CurrentQuestion.enquiry);
-            SetColor(InscriptionManager.CurrentPhilosopheme.enquiryColor);
-        }
-        else
-        {
-            SetText(InscriptionManager.CurrentPhilosopheme.replyPrefix + " " + text);
-        }
-    }
+    //void OnPhilosophemeUpdate()
+    //{
+    //    if (isQuestion)
+    //    {
+    //        SetText(InscriptionManager.CurrentQuestion.enquiry);
+    //        SetColor(InscriptionManager.CurrentPhilosopheme.enquiryColor);
+    //    }
+    //    else
+    //    {
+    //        SetText(InscriptionManager.CurrentPhilosopheme.replyPrefix + " " + text);
+    //    }
+    //}
     public void Reply()
     {
         if (!hasBeenReplied)
@@ -227,8 +228,8 @@ public class Inscription : MonoBehaviour
             hasBeenReplied = true;
             SetText(InscriptionManager.CurrentQuestion.reply);
             SetColor(InscriptionManager.CurrentPhilosopheme.replyColor);
-            InscriptionManager.UnsubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate);
-            OnQuestionReplyEvent?.Invoke();
+            //InscriptionManager.UnsubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate);
+            InscriptionManager.OnQuestionReply();
         }
     }
     void SetText(string text)
@@ -271,11 +272,28 @@ public class Inscription : MonoBehaviour
                     break;
                 }
             }
-            if (!isVisible) return false;
         }
-        IsActive = true;
-        growDeltaMultiplier = 1;
-        return true;
+        if (isVisible)
+        {
+            IsActive = true;
+            growDeltaMultiplier = 1;
+
+            if (isQuestion)
+            {
+                if (!hasBeenReplied && counter != InscriptionManager.questionCounter)
+                {
+                    counter = InscriptionManager.questionCounter;
+                    SetText(InscriptionManager.CurrentQuestion.enquiry);
+                    SetColor(InscriptionManager.CurrentPhilosopheme.enquiryColor);
+                }
+            }
+            else if (isReply && counter != InscriptionManager.philosophemeCounter)
+            {
+                counter = InscriptionManager.philosophemeCounter;
+                SetText(InscriptionManager.CurrentPhilosopheme.replyPrefix + " " + text);
+            }
+        }
+        return isVisible;
     }
     public void Hide()
     {

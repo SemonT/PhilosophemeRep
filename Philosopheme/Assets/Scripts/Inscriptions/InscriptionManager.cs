@@ -19,12 +19,14 @@ public class InscriptionManager : MonoBehaviour
         public string replyPrefix;
         public Question[] questions;
     }
-    public delegate void OnPhilosophemeUpdate();
+    //public delegate void OnPhilosophemeUpdate();
 
     public static Camera cam;
     static float maxVisibleDistance;
 
-    static OnPhilosophemeUpdate PhilosophemeUpdateEvent;
+    //static OnPhilosophemeUpdate PhilosophemeUpdateEvent;
+    public static int questionCounter { get; private set; }
+    public static int philosophemeCounter { get; private set; }
     static int currentPhilosophemeIndex;
     public static Philosopheme CurrentPhilosopheme { get; private set; }
     static int currentQuestionIndex;
@@ -72,23 +74,25 @@ public class InscriptionManager : MonoBehaviour
         }
         return isVisible;
     }
-    public static void SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
-    {
-        PhilosophemeUpdateEvent += f;
-    }
-    public static void UnsubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
-    {
-        PhilosophemeUpdateEvent -= f;
-    }
+    //public static void SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
+    //{
+    //    PhilosophemeUpdateEvent += f;
+    //}
+    //public static void UnsubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate f)
+    //{
+    //    PhilosophemeUpdateEvent -= f;
+    //}
     public static void ForgetInscription(Inscription i)
     {
         if (i == lastInscription) lastInscription = null;
     }
-    static void OnQuestionReply()
+    public static void OnQuestionReply()
     {
+        questionCounter++;
         currentQuestionIndex++;
         if (currentQuestionIndex >= CurrentPhilosopheme.questions.Length)
         {
+            philosophemeCounter++;
             currentQuestionIndex = 0;
             currentPhilosophemeIndex++;
             if (currentPhilosophemeIndex >= philosophemes.Length)
@@ -99,7 +103,7 @@ public class InscriptionManager : MonoBehaviour
         }
         CurrentPhilosopheme = philosophemes[currentPhilosophemeIndex];
         CurrentQuestion = CurrentPhilosopheme.questions[currentQuestionIndex];
-        PhilosophemeUpdateEvent?.Invoke();
+        //PhilosophemeUpdateEvent?.Invoke();
     }
 
     public float maxDistance = 10f;
@@ -117,8 +121,10 @@ public class InscriptionManager : MonoBehaviour
         maxVisibleDistance =  maxDistance;
         camTransform = cam.gameObject.transform;
 
-        Inscription.Init(markPrefab, cam, inscriptionsSpace, maxDistance, revealTime, padding, OnQuestionReply);
+        Inscription.Init(markPrefab, cam, inscriptionsSpace, maxDistance, revealTime, padding);
 
+        questionCounter = 0;
+        philosophemeCounter = 0;
         philosophemes = philosophemesList;
         currentPhilosophemeIndex = 0;
         currentQuestionIndex = 0;
