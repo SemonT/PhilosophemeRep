@@ -120,14 +120,12 @@ public abstract class npc : Interactable
                         GameObject obj = Instantiate(
                             block.matrix.npc.letterPrefab,
                             block.matrix.npc.gameObject.transform.position,
-                            Quaternion.LookRotation(block.matrix.npc.orientationTransform.localPosition - targetPos),
+                            Quaternion.identity,
                             lineO.transform);
                         letters.Add(obj);
                         GameManager.PositionTranslationObject o = new GameManager.PositionTranslationObject(obj.transform, targetPos, block.matrix.npc.textReachTime, GameManager.PositionTranslationObject.maxSpeedDefault, GameManager.PositionTranslationObject.errorDefault, i * block.matrix.npc.textDelayDelta);
                         GameManager.instance.TranslatePositionObject(ref o);
-        //                Debug.DrawLine(obj.transform.localPosition, block.matrix.npc.orientationTransform.localPosition, Color.red, 999);
-        //                obj.transform.localRotation = Quaternion.LookRotation(obj.transform.localPosition - block.matrix.npc.orientationTransform.localPosition);
-        //                obj.transform.rotation = Quaternion.LookRotation(obj.transform.position - Player.instance.transform.position,Vector3.up);
+                        obj.transform.localRotation = Quaternion.LookRotation(targetPos - block.matrix.npc.orientationTransform.localPosition, Vector3.up);
                         if (i == text.Length - 1) lastLetterTransit = o;
                         TextMesh mesh = obj.GetComponent<TextMesh>();
                         mesh.text = text[i].ToString();

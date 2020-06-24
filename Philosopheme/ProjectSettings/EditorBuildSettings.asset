@@ -11,13 +11,13 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
-    path: Assets/Scenes/NewDemoLevel.unity
-    guid: 818755db0182cee4a98b1a6ca44af79b
-  - enabled: 1
-    path: Assets/Scenes/DeathScene.unity
-    guid: 5c4291f7523954947ad1841f63b3022c
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/DemoLevel.unity
     guid: 1c231990f5f4cc3488ed42c1f79d274e
+  - enabled: 1
+    path: Assets/Scenes/DeathScene.unity
+    guid: 5c4291f7523954947ad1841f63b3022c
   m_configObjects: {}

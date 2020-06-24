@@ -36,7 +36,7 @@ public class Inscription : MonoBehaviour
     public Transform inscriptionPoint;
 
     Renderer rendererrr;
-    new Collider collider;
+    Collider colliderrrr;
     Mesh mesh;
 
     Mark mark;
@@ -59,8 +59,8 @@ public class Inscription : MonoBehaviour
         rendererrr = GetComponent<Renderer>();
         if (!rendererrr)
         {
-            collider = GetComponent<Collider>();
-            if (!collider)
+            colliderrrr = GetComponent<Collider>();
+            if (!colliderrrr)
             {
                 mesh = GetComponent<Mesh>();
                 if (!mesh)
@@ -68,7 +68,7 @@ public class Inscription : MonoBehaviour
                     rendererrr = GetComponentInChildren<Renderer>(false);
                     if (!rendererrr)
                     {
-                        collider = GetComponentInChildren<Collider>(true);
+                        colliderrrr = GetComponentInChildren<Collider>(true);
                     }
                 }
             }
@@ -135,18 +135,18 @@ public class Inscription : MonoBehaviour
                 markRectTransform.localScale = Vector2.one * sizeMultiplier;
             }
 
-            Collider[] colliders = GetComponentsInChildren<Collider>();
+            Collider[] colliderrrrs = GetComponentsInChildren<Collider>();
             Bounds[] boundsArray;
-            if (colliders.Length > 0)
+            if (colliderrrrs.Length > 0)
             {
-                boundsArray = new Bounds[colliders.Length];
+                boundsArray = new Bounds[colliderrrrs.Length];
                 for (int i = 0; i < boundsArray.Length; i++)
                 {
-                    boundsArray[i] = colliders[i].bounds;
+                    boundsArray[i] = colliderrrrs[i].bounds;
                 }
             }
             else if (rendererrr) boundsArray = new Bounds[1] { rendererrr.bounds };
-            else if (collider) boundsArray = new Bounds[1] { collider.bounds };
+            else if (colliderrrr) boundsArray = new Bounds[1] { colliderrrr.bounds };
             else if (mesh) boundsArray = new Bounds[1] { mesh.bounds };
             else boundsArray = new Bounds[1] { new Bounds(transform.position, Vector3.one) };
 
