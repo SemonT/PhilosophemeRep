@@ -219,7 +219,8 @@ public class Inscription : MonoBehaviour
     }
     void SetText(string text)
     {
-        textMesh.SetText(text);
+        //textMesh.SetText(text);
+        textMesh.text = text;
 
         TMP_TextInfo textInfo = textMesh.GetTextInfo(textMesh.text);
         identityFieldDelta = new Vector2(
