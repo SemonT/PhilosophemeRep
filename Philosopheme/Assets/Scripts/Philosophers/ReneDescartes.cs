@@ -9,9 +9,9 @@ public class ReneDescartes : npc
     public Transform final;
     public GameObject club;
     public GameObject cucumber1;
-    public GameObject cucumber2;
+    public GameObject aliveCucumber;
+    public Health aliveCucumberHealth;
     public GameObject[] manyVegetables;
-    public Health cucumberHP;
 
     public bool trigger1 = false;
     public bool trigger2 = false;
@@ -60,8 +60,8 @@ public class ReneDescartes : npc
             BlockC();
 
             // print(cucumberHP.curHealth);
-          //  print(trigger2);
-            if (trigger2) //cucumberHP.curHealth <= 0) // trigger2
+            //  print(trigger2);
+            if (!aliveCucumberHealth || aliveCucumberHealth.curHealth <= 0) //cucumberHP.curHealth <= 0) // trigger2
             {
                 BlockO();
                 string option1 = Option(new string[1] { "Я попытался усомниться в том, что могу сомневаться и... произошло нечто странное... Почему так произошло?" });
@@ -127,11 +127,6 @@ public class ReneDescartes : npc
         DialogueC();
     }
 
-    public new void Start()
-    {
-        base.Start();
-        cucumberHP = cucumber2.GetComponent<Health>();
-    }
     private void Awake()
     {
         if (!instance) instance = this;
@@ -149,8 +144,8 @@ public class ReneDescartes : npc
     {
         cucumber1.SetActive(true);
         cucumber1.transform.SetParent(null, true);
-        cucumber2.SetActive(true);
-        cucumber2.transform.SetParent(null, true);
+        aliveCucumber.SetActive(true);
+        aliveCucumber.transform.SetParent(null, true);
     }
     void GiveManyVegetables()
     {
