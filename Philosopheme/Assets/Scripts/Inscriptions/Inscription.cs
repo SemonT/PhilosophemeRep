@@ -93,8 +93,6 @@ public class Inscription : MonoBehaviour
 
         if (!isQuestion)
         {
-            //InscriptionManager.SubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate);
-            //OnPhilosophemeUpdate();
             if (isReply)
             {
                 SetColor(color);
@@ -209,18 +207,6 @@ public class Inscription : MonoBehaviour
 
         }
     }
-    //void OnPhilosophemeUpdate()
-    //{
-    //    if (isQuestion)
-    //    {
-    //        SetText(InscriptionManager.CurrentQuestion.enquiry);
-    //        SetColor(InscriptionManager.CurrentPhilosopheme.enquiryColor);
-    //    }
-    //    else
-    //    {
-    //        SetText(InscriptionManager.CurrentPhilosopheme.replyPrefix + " " + text);
-    //    }
-    //}
     public void Reply()
     {
         if (!hasBeenReplied)
@@ -228,7 +214,6 @@ public class Inscription : MonoBehaviour
             hasBeenReplied = true;
             SetText(InscriptionManager.CurrentQuestion.reply);
             SetColor(InscriptionManager.CurrentPhilosopheme.replyColor);
-            //InscriptionManager.UnsubscribeToPhilosophemeUpdateEvent(OnPhilosophemeUpdate);
             InscriptionManager.OnQuestionReply();
         }
     }
