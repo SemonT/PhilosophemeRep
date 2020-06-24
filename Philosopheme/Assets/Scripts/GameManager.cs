@@ -98,6 +98,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager instance;
 
+    public static Canvas canvas;
 
     public delegate void Function();
     public void InvokeNextFrame(Function function)
@@ -131,11 +132,6 @@ public class GameManager : MonoBehaviour
         float distance = dir.magnitude;
         if (distance > maxDistance) return false;
 
-        if (go2.name == "Eye1")
-        {
-            print("Eye1");
-        }
-
         bool isVisible = true;
         RaycastHit[] hits = Physics.RaycastAll(pos1, dir, distance, layerMask, q);
         //Debug.DrawRay(pos1, dir.normalized * distance, Color.red, Time.deltaTime);
@@ -155,13 +151,10 @@ public class GameManager : MonoBehaviour
     }
     public static Vector2 WorldPositionToUIPos(Camera cam, RectTransform rect, Vector3 pos)
     {
-        Vector2 viewportPos = cam.WorldToViewportPoint(pos);
-        Vector2 centerPos = viewportPos - Vector2.one * 0.5f;
-        Vector2 canvasPos = new Vector2(
-            rect.sizeDelta.x * centerPos.x,
-            rect.sizeDelta.y * centerPos.y
-            );
-        return canvasPos;
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(cam, pos);
+        Vector2 localPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPos, null, out localPos);
+        return localPos;
     }
     public static Rect WorldBoundsToUIRect(Camera cam, RectTransform rectTransform, Bounds b)
     {
@@ -222,7 +215,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (!instance) instance = this;
+        if (!instance)
+        {
+            instance = this;
+            canvas = GetComponent<Canvas>();
+        }
         camDefaultFieldOfView = cam.fieldOfView;
         MaterialModel.Initialise();
     }
@@ -316,6 +313,10 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (instance == this) instance = null;
+        if (instance == this)
+        {
+            instance = null;
+            canvas = null;
+        }
     }
 }

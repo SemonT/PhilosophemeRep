@@ -13,7 +13,7 @@ public class Inscription : MonoBehaviour
     static GameObject markPrefab;
     static Camera cam;
     static Transform camTransform;
-    static RectTransform spaceRectTransform;
+    public static RectTransform spaceRectTransform;
     static float maxDistance;
     static float revealTime;
     static Vector2 padding;
