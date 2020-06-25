@@ -32,7 +32,6 @@ public class Movement : MonoBehaviour
 
     public void MoveOnGround(float x, float y, bool moveLock)
     {
-        // Некорректно на случай, если ГГ что-то сильно пнёт и нужно будет замедлиться
         if (!moveLock && playerRB.velocity.magnitude < speed)
         {
             // F = m * a = m * v / t
@@ -95,6 +94,23 @@ public class Movement : MonoBehaviour
         }
     }
 
+    public void Inertion(float x, float y)
+    {
+        float curSpeed = playerRB.velocity.magnitude;
+        if ((x == 0 || y == 0) && curSpeed > EPSILON)
+        {
+            playerRB.AddForce(-playerRB.velocity);
+        }
+
+//        Debug.DrawRay(transform.position, playerRB.velocity.x, Color.red);
+
+
+        /* else if (playerRB.velocity.x > 0)
+        {
+
+        }*/
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -110,8 +126,14 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Transform child1 = transform.GetChild(1);
+
+
         Vector3 origin2 = transform.localPosition - jumpOrigin * transform.up;
         Debug.DrawRay(origin2, -transform.up, Color.red);
+
+        Debug.DrawRay(child1.position, playerRB.velocity, Color.cyan);
+        Debug.DrawRay(child1.position, child1.right * playerRB.velocity.x, Color.red);
     }
 }
 //   transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, sprintBoost * speed * Time.deltaTime);
