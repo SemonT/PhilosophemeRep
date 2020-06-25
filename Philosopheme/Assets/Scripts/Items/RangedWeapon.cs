@@ -228,9 +228,18 @@ public class RangedWeapon : Item
                 h = Mathf.Pow(x3, n);
 
                 fireEffect?.Play();
+                Vector3 dir;
+                if (GameManager.regardHitted)
+                {
+                    dir = GameManager.regardHit.point - bulletBasis.position;
+                }
+                else
+                {
+                    dir = bulletBasis.forward;
+                }
                 SimulateStep(
                     bulletBasis.position,
-                    bulletBasis.forward,
+                    dir,
                     0);
             }
         }

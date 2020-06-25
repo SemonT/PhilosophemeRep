@@ -97,7 +97,8 @@ public class GameManager : MonoBehaviour
     public List<GameObject> creatures = new List<GameObject>();
 
     public static GameManager instance;
-
+    public static bool regardHitted;
+    public static RaycastHit regardHit;
     public static Canvas canvas;
 
     public delegate void Function();
@@ -198,6 +199,7 @@ public class GameManager : MonoBehaviour
     }
 
     public Camera cam;
+    public Transform cameraTransform;
     public Light[] mainLights;
     public MaterialPack[] materialPacks;
 
@@ -226,12 +228,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        cameraTransform = instance.cam.transform;
+        regardHitted = false;
     }
 
     void Update()
     {
         ObjectsPositionTranslations();
+        regardHitted = Physics.Raycast(cameraTransform.position, cameraTransform.forward, out regardHit);
     }
 
     void ObjectsPositionTranslations()
