@@ -17,12 +17,17 @@ public abstract class AI : MonoBehaviour
     protected float curDist = 10000;
     protected bool ranged;
 
+    protected bool attackTrigger = false;
+    protected bool attackEndTrigg = true;
+
     protected float halfAngle = 180f;
     protected float curAngle = 10000;
 
     protected Player player;
 
     protected Vector3 dd;
+
+    protected AnimatorStateInfo clip;
 
     // Переменная для милишных ИИ
     protected float deltaAttack = 0f;
@@ -34,6 +39,18 @@ public abstract class AI : MonoBehaviour
         if (isHostile & agent) agent.isStopped = true;
         OnDisable();
     }
+
+    public void SetAttackTrigger()
+    {
+        attackTrigger = true;
+    }
+
+    public void SetAttackEndTrigg()
+    {
+        attackEndTrigg = true;
+    }
+
+
 
     protected bool Filter(GameObject go)
     {
@@ -61,7 +78,6 @@ public abstract class AI : MonoBehaviour
 
     protected virtual void GetTarget(GameObject other, Vector3 pos, Vector3 dir, float maxDistance, float minDistance, out float currentDistance, out float currentAngle, out Vector3 d)
     {
-
         bool isVisible = GameManager.CheckForLinearVisibility(glaz, player.gameObject, maxDistance, ~0, QueryTriggerInteraction.Ignore, Filter);
 
         Debug.DrawRay(pos, dir, Color.red);
@@ -77,15 +93,19 @@ public abstract class AI : MonoBehaviour
 
         bool inVisie = currentAngle < halfAngle;
 
- //       print(deltaD);
-
-        if (isVisible)
+        //       print(deltaD);
+       /*
+        if(clip.IsName("Attack"))
+        {
+            print("Yes");
+        }
+        */
+        if (isVisible && !clip.IsName("Attack"))
         {
             agent.SetDestination(player.transform.position);
         }
     }
 
-    // Start is called before the first frame update
     protected virtual void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -95,9 +115,10 @@ public abstract class AI : MonoBehaviour
         player = Player.instance;
     }
 
-    // Update is called once per frame
     protected virtual void Update()
     {
+        clip = anime.GetCurrentAnimatorStateInfo(0);
+
         Vector3 pos = transform.position + transform.up * 0.5f;
 
         foreach (GameObject obj in GameManager.instance.creatures)
@@ -106,7 +127,7 @@ public abstract class AI : MonoBehaviour
             {
                 Vector3 dir = obj.transform.position - pos;
 
-                if (isHostile & obj.GetComponent<Player>() != null)
+                if (isHostile && (obj.GetComponent<Player>() != null))// && !ranged)
                 {
                     GetTarget(obj, pos, dir, maxDist, minDist, out curDist, out curAngle, out dd);
                 }
@@ -114,25 +135,25 @@ public abstract class AI : MonoBehaviour
         }
         // Ниже код, отвечающий за анимации
 
+        if (clip.IsName("Attack")) agent.SetDestination(transform.position);
+
+
         float veloc = agent.velocity.magnitude;
         anime.SetFloat("Move", veloc);
- //       print("Скорость " + transform.name + " !! " + veloc);
 
         float tempDist = agent.stoppingDistance + deltaAttack;
 
-
- //       print(transform.name + " раз  " + tempDist + " и расстояние " + curDist);
-
         ranged = curDist <= tempDist;
 
-
-        if (ranged & isHostile)
+        if (ranged && isHostile && attackEndTrigg)// && !clip.IsName("Attack"))
         {
+            attackEndTrigg = false;
             transform.LookAt(transform.position + dd);
             anime.SetTrigger("Attack");
+            agent.SetDestination(transform.position);
         }
 
- //       print("Расстояние " + transform.name + " !! " + curDist + " А необходимо: " + tempDist);
+       
     }
 
 

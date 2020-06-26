@@ -1716,7 +1716,7 @@ MonoBehaviour:
   - {fileID: 5423366244510881842, guid: 7a386baf29d469a409d22ce91c5d8e2b, type: 3}
   firepoint: {fileID: 4463561683431432796}
   accuracy: 35
-  force: 90
+  force: 50
 --- !u!114 &3734748103229749037
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 6447538964829342448}
   - component: {fileID: 6447538964829342445}
   - component: {fileID: 6447538964829342444}
-  - component: {fileID: 2802869688368135054}
   - component: {fileID: 5973449140137815241}
   m_Layer: 0
   m_Name: ThrowablePotato (34)
@@ -126,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40bc2c5d85fc9a244b69c51a66f9ebfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInteractable: 1
+  isInteractable: 0
   className: Throwable
   handleBasis: {fileID: 4253760479140358778}
   isUsable: 0
@@ -154,23 +153,6 @@ MonoBehaviour:
     force: 6
     lifeTime: 25
     lifeAfterCollide: 1.5
---- !u!114 &2802869688368135054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6447538964829342450}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7342c08a1aac3f4b83e1388a83414af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isQuestion: 0
-  isReply: 1
-  text: "\u041A\u0430\u0440\u0442\u043E\u0448\u043A\u0430"
-  color: {r: 0.8679245, g: 0.7567045, b: 0.51174796, a: 1}
-  inscriptionPoint: {fileID: 0}
 --- !u!114 &5973449140137815241
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -43,7 +43,6 @@ GameObject:
   - component: {fileID: 8566121544735202848}
   - component: {fileID: 7647215145949082086}
   - component: {fileID: 7647215145949082089}
-  - component: {fileID: 7647215145949082088}
   - component: {fileID: 7647215145949082091}
   - component: {fileID: 1958007185821240382}
   m_Layer: 0
@@ -144,23 +143,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7647215145949082088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7647215145949082090}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7342c08a1aac3f4b83e1388a83414af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isQuestion: 0
-  isReply: 1
-  text: "\u041C\u043E\u0440\u043A\u043E\u0448\u043A\u0430"
-  color: {r: 0.9686275, g: 0.49411768, b: 0.15294118, a: 1}
-  inscriptionPoint: {fileID: 0}
 --- !u!114 &7647215145949082091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40bc2c5d85fc9a244b69c51a66f9ebfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isInteractable: 1
+  isInteractable: 0
   className: Throwable
   handleBasis: {fileID: 6523764971687707351}
   isUsable: 0
