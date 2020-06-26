@@ -15,13 +15,18 @@ public class RangedAI : AI
     protected float fireTime;
     protected float fireTimer;
 
+
+
     protected override void Start()
     {
         base.Start();
         fireTime = anime.GetCurrentAnimatorClipInfo(0).Length;
+        
         fireTimer = fireTime;
         //print("Время анимации " + fireTime);
     }
+
+
 
     public override void OnDisable()
     {
@@ -34,8 +39,10 @@ public class RangedAI : AI
 
         if (ranged & isHostile)
         {
-            if(fireTimer <= 0)
+            if(attackTrigger)//(fireTimer <= 0)
             {
+                attackTrigger = false;
+
                 GameObject ball = Instantiate(fireballs[Random.Range(0, fireballs.Length)], firepoint);
                 firepoint.DetachChildren();
 
